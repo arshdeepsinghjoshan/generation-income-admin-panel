@@ -12,6 +12,7 @@ use DataTables;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+
 class UserController extends Controller
 {
     public function index()
@@ -36,6 +37,46 @@ class UserController extends Controller
         }
     }
 
+    protected static function stateValidator(array $data, $id = null)
+    {
+        return Validator::make(
+            $data,
+            [
+                'model_type' => 'required',
+                'model_id' => 'required',
+                'workflow' => 'required'
+
+            ],
+            [
+                'model_type.required' => 'The model type is not found.',
+                'model_id.required' => 'The model id is not found.',
+                'workflow.required' => 'The workflow is not found.',
+            ]
+        );
+    }
+
+    public function stateChange(Request $request)
+    {
+        try {
+            if ($this->stateValidator($request->all())->fails()) {
+                $message = $this->stateValidator($request->all())->messages()->first();
+                return redirect()->back()->with('error', $message);
+            }
+            $model   = $request->model_type::find($request->model_id);
+            if ($model) {
+                $update = $model->update([
+                    $request->attribute => $request->workflow,
+                ]);
+                return redirect()->back()->with('success', preg_replace('/(?<!\s)[A-Z]/', ' $0', class_basename($model)) . ' has been ' . $model->getState() . '!');
+            } else {
+                redirect()->back()->with('success', 'Something went wrong');
+                return redirect('404');
+            }
+        } catch (\Exception $e) {
+            $bug = $e->getMessage();
+            return redirect()->back()->with('error', $bug);
+        }
+    }
 
 
     public function update(Request $request, $id)
@@ -69,21 +110,17 @@ class UserController extends Controller
     public $setFilteredRecords = 0;
     public function getUserList(Request $request, $role_id = null)
     {
-        $query  = User::where('role_id', '!=', User::ROLE_ADMIN)->orderBy('id', 'Desc');
+        $query  = User::orderBy('id', 'Desc');
 
         if (!User::isAdmin())
             $query->my();
-
-
-        if ($role_id != null)
-            $query->where('role_id', $role_id);
 
 
         return Datatables::of($query)
             ->addIndexColumn()
 
             ->addColumn('created_by', function ($data) {
-                return !empty($data->createdBy && $data->createdBy->first_name) ? $data->createdBy->first_name : 'N/A';
+                return !empty($data->createdBy && $data->createdBy->name) ? $data->createdBy->name : 'N/A';
             })
             ->addColumn('name', function ($data) {
                 return !empty($data->name) ? (strlen($data->name) > 60 ? substr(ucfirst($data->name), 0, 60) . '...' : ucfirst($data->name)) : 'N/A';
@@ -91,7 +128,9 @@ class UserController extends Controller
             ->addColumn('role_id', function ($data) {
                 return  $data->getRole();
             })
-
+            ->addColumn('status', function ($data) {
+                return '<span class="' . $data->getStateBadgeOption() . '">' . $data->getState() . '</span>';
+            })
             ->addColumn('id', function ($data) {
                 return $this->s_no++;
             })
@@ -102,8 +141,8 @@ class UserController extends Controller
             })
             ->addColumn('action', function ($data) {
                 $html = '<div class="table-actions text-center">';
-                $html .= ' <a class="btn btn-primary mt-1" href="' . url('user/edit/' . $data->id) . '" ><i class="fa fa-edit"></i></a>';
-                $html .=    '  <a class="btn btn-primary mt-1" href="' . url('user/view/' . $data->id) . '"  ><i class="fa fa-eye
+                $html .= ' <a class="btn btn-icon btn-primary mt-1" href="' . url('user/edit/' . $data->id) . '" ><i class="fa fa-edit"></i></a>';
+                $html .=    '  <a class="btn btn-icon btn-primary mt-1" href="' . url('user/view/' . $data->id) . '"  ><i class="fa fa-eye
                     "data-toggle="tooltip"  title="View"></i></a>';
                 $html .=  '</div>';
                 return $html;
@@ -126,16 +165,11 @@ class UserController extends Controller
                     $query->where(function ($q) use ($searchTerms) {
                         foreach ($searchTerms as $term) {
                             $q->where('id', 'like', "%$term%")
-                                ->Where('first_name', 'like', "%$term%")
-                                ->orWhere('last_name', 'like', "%$term%")
-                                ->orWhere('unique_id', 'like', "%$term%")
+                                ->Where('name', 'like', "%$term%")
                                 ->orWhere('email', 'like', "%$term%")
-                                ->orWhere('total_bv', 'like', "%$term%")
-                                ->orWhere('phone', 'like', "%$term%")
                                 ->orWhere('created_at', 'like', "%$term%")
                                 ->orWhereHas('createdBy', function ($query) use ($term) {
-                                    $query->Where('first_name', 'like', "%$term%");
-                                    $query->orWhere('last_name', 'like', "%$term%");
+                                    $query->Where('name', 'like', "%$term%");
                                 })->orWhere(function ($query) use ($term) {
                                     $query->searchRole($term);
                                 });
@@ -145,35 +179,66 @@ class UserController extends Controller
             })
             ->make(true);
     }
+    public function search(Request $request)
+    {
+        try {
 
+            $validator = Validator::make($request->all(), [
+                'search' => 'required'
+            ]);
+            if ($validator->fails()) {
+                $message = $validator->messages()->first();
+                return redirect()->back()->withInput()->with('error', $message);
+            }
+            $q =  $request->search;
+            $customer = User::where('name', 'LIKE', '%' . $q . '%')->orWhere('email', 'LIKE', '%' . $q . '%')
+                ->orWhere('id', 'LIKE', '%' . $q . '%')
+                ->orWhere('email', 'LIKE', '%' . $q . '%')
+                ->orWhere('referral_id', 'LIKE', '%' . $q . '%')
+                ->first();
+            if (!$customer)
+                return redirect('/dashboard')->with('error', 'User not found');
+
+            return redirect()->route('serach.user', $customer->id);
+
+        } catch (\Exception $e) {
+            $bug = $e->getMessage();
+            return redirect()->back()->with('error', $bug);
+        }
+    }
+
+
+    public function searchUser(Request $request, $id)
+    {
+        try {
+            $model  = User::find($id);
+
+            if (!$model)
+                return redirect('/')->with('error', 'User not found');
+
+
+            return view('user.view', compact('model'));
+        } catch (\Exception $e) {
+            $bug = $e->getMessage();
+            return redirect()->back()->with('error', $bug);
+        }
+    }
 
     protected static function validator(array $data, $id = null)
     {
         $rules = [
-            "first_name" => "required|string",
-            "last_name" => "string",
-            "phone" => "required|numeric|digits:10",
-            "age" => "required|numeric|min:15",
+            "name" => "required|string",
             "email" => "required|email",
         ];
         if ($id === null) {
             $rules = array_merge($rules, [
                 "password" => "required|string|min:4",
                 "confirm_password" => "required|same:password",
-                "referral_unique_id" => "required|exists:users,unique_id",
+                "referrad_code" => "required|exists:users,referral_id",
 
             ]);
         }
-        if (User::isAdmin()) {
-            $userMOdel = User::find($id);
-            if (empty($userMOdel) || $userMOdel->role_id != User::ROLE_ADMIN) {
-                $rules = array_merge($rules, [
-                    "role_id" => "required",
-                    "referral_unique_id" => "required|exists:users,unique_id",
 
-                ]);
-            }
-        }
 
         return Validator::make($data, $rules);
     }
@@ -186,27 +251,25 @@ class UserController extends Controller
                 return redirect()->back()->withInput()->with('error', $message);
             }
             $model = new User();
-            $model->fill($request->all());
-            if (!User::isAdmin()) {
-                $model->role_id = User::ROLE_USER;
+            $userGet = User::where('referral_id', $request->referrad_code)->first();
+            if (!$userGet) {
+                return redirect('/')->with('error', 'Invalid Code!');
             }
-            $model->created_by_id = Auth::user()->id;
-            $model->referral_id = User::where('unique_id', $request->referral_unique_id)->first()->id;
-            $model->generateCustomerId();
+            $model->referrad_code = $userGet->referrad_code;
+            $model->fill($request->all());
+            $model->generateReferralCode();
+            $model->role_id = User::ROLE_USER;
+            $model->state_id = User::STATE_ACTIVE;
+            $model->created_by_id = Auth::id();
+            $model->parent_id = $userGet->id;
             $model->password();
-            $accounts_with_email = User::where('email', $request->email)->get();
-            $accounts_with_phone = User::where('phone', $request->phone)->get();
-            if (count($accounts_with_email) <= 5 || count($accounts_with_phone) <= 5) {
-                if ($model->save()) {
-                    return redirect('/user/view/' . $model->id)->with('success', 'User created successfully!');
-                } else {
-                    return redirect('/user')->with('error', 'Unable to save the User!');
-                }
+
+            if ($model->save()) {
+                return redirect('/user/view/' . $model->id)->with('success', 'User created successfully!');
             } else {
-                return redirect('/user')->with('error', 'You can have upto 5 accounts only with same Email or Phone number!');
+                return redirect('/user')->with('error', 'Unable to save the User!');
             }
         } catch (\Exception $e) {
-            $bug = $e->getMessage();
             return redirect()->back()->withInput()->with('error', $e->getMessage());
         }
     }
@@ -321,7 +384,7 @@ class UserController extends Controller
 
         $request->session()->regenerateToken();
 
-      
+
 
         return $request->wantsJson()
             ? new Response('', 204)

@@ -1,34 +1,13 @@
 <!DOCTYPE html>
 
-<!-- =========================================================
-* Sneat - Bootstrap 5 HTML Admin Template - Pro | v1.0.0
-==============================================================
+<html lang="en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default" data-assets-path="../assets/" data-template="vertical-menu-template-free">
 
-* Product Page: https://themeselection.com/products/sneat-bootstrap-html-admin-template/
-* Created by: ThemeSelection
-* License: You must have a valid license purchased in order to legally use the theme for your project.
-* Copyright ThemeSelection (https://themeselection.com)
-
-=========================================================
- -->
-<!-- beautify ignore:start -->
-<html
-  lang="en"
-  class="light-style layout-menu-fixed"
-  dir="ltr"
-  data-theme="theme-default"
-  data-assets-path="../assets/"
-  data-template="vertical-menu-template-free"
->
-  <head>
+<head>
     <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
     <title>{{ env('APP_NAME') }} - @yield('title')</title>
-   
+
 
     <meta name="description" content="" />
 
@@ -38,10 +17,7 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
 
     <!-- Icons. Uncomment required icon fonts -->
     <link rel="stylesheet" href="{{ url('/assets/vendor/fonts/boxicons.css') }}" />
@@ -50,6 +26,7 @@
     <link rel="stylesheet" href="{{ url('/assets/vendor/css/core.css') }}" class="template-customizer-core-css" />
     <link rel="stylesheet" href="{{ url('/assets/vendor/css/theme-default.css') }}" class="template-customizer-theme-css" />
     <link rel="stylesheet" href="{{ url('/assets/css/demo.css') }}" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" rel="stylesheet">
 
     <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ url('/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
@@ -64,19 +41,14 @@
     <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
     <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{ url('/assets/js/config.js') }}"></script>
- <style>
-        .required label:after {
-            content: "*";
-            color: red;
-            margin-left: 3px;
-        }
-    </style>
-     </head>
+    <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet" type="text/css" />
+
+</head>
 
 
 
 <body>
- 
+
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <!-- Menu -->
@@ -88,18 +60,18 @@
             <!-- Layout container -->
             <div class="layout-page">
                 <!-- Navbar -->
-               
+
 
                 @include('layouts.top_navbar')
                 <!-- / Navbar -->
-@if (session('success') || session('error'))
-<div class="container-xxl mt-2">
+                @if (session('success') || session('error'))
+                <div class="container-xxl mt-2">
 
-                <!-- Content wrapper -->
-                               @include('include.message')
+                    <!-- Content wrapper -->
+                    @include('include.message')
 
-             </div>
-@endif
+                </div>
+                @endif
                 @yield('content')
 
 
@@ -144,6 +116,18 @@
     <script src="{{ url('assets/vendor/js/menu.js') }}"></script>
     <script src="{{ url('assets/js/main.js') }}"></script>
     <script src="{{ url('assets/js/dashboards-analytics.js') }}"></script>
+
+    <script>
+        $(".toggle-password").click(function() {
+            $(this).toggleClass("fa-eye fa-eye-slash ");
+            $('#password').prop('type', $("#password").prop('type') == 'text' ? 'password' : 'text');
+
+        });
+        $(".toggle-password-confirm").click(function() {
+            $(this).toggleClass("fa-eye fa-eye-slash ");
+            $('#confirm_password').prop('type', $("#confirm_password").prop('type') == 'text' ? 'password' : 'text');
+        });
+    </script>
 </body>
 
 </html>

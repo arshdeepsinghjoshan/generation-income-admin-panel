@@ -1,0 +1,43 @@
+.required label:after {
+    content: "*";
+    color: red;
+    margin-left: 3px;
+}
+
+.text-right {
+    text-align: end !important;
+}
+
+/* Breadcrumbs */
+.breadcrumb {
+    font-size: 14px;
+    font-family: "Nunito", sans-serif;
+    color: #899bbd;
+    font-weight: 600;
+
+    background: #fff;
+    margin-bottom: 0;
+    padding: 10px 15px;
+}
+
+.user-update-state {
+    margin-left: 10px;
+}
+
+.breadcrumb a {
+    color: #899bbd;
+    transition: 0.3s;
+}
+
+.breadcrumb a:hover {
+    color: #51678f;
+}
+
+.breadcrumb .breadcrumb-item::before {
+    color: #899bbd;
+}
+
+.breadcrumb .active {
+    color: #51678f;
+    font-weight: 600;
+}

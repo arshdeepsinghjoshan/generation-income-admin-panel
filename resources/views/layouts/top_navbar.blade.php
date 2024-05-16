@@ -10,7 +10,10 @@
         <div class="navbar-nav align-items-center">
             <div class="nav-item d-flex align-items-center">
                 <i class="bx bx-search fs-4 lh-0"></i>
-                <input type="text" class="form-control border-0 shadow-none" placeholder="Search..." aria-label="Search..." />
+                <form action="{{route('admin.serach')}}" method="post">
+                    @csrf
+                    <input type="search" class="form-control border-0 shadow-none" name="search" placeholder="Search..." aria-label="Search..." />
+                </form>
             </div>
         </div>
         <!-- /Search -->
@@ -27,7 +30,7 @@
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
                     <li>
-                        <a class="dropdown-item" href="#">
+                        <a class="dropdown-item" href="{{url('user/view/'.Auth::id())}}">
                             <div class="d-flex">
                                 <div class="flex-shrink-0 me-3">
                                     <div class="avatar avatar-online">
@@ -45,15 +48,15 @@
                         <div class="dropdown-divider"></div>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="#">
+                        <a class="dropdown-item" href="{{url('user/view/'.Auth::id())}}">
                             <i class="bx bx-user me-2"></i>
                             <span class="align-middle">My Profile</span>
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="#">
+                        <a class="dropdown-item" href="{{url('user/edit/'.Auth::id())}}">
                             <i class="bx bx-cog me-2"></i>
-                            <span class="align-middle">Settings</span>
+                            <span class="align-middle">Update</span>
                         </a>
                     </li>
                     <li>

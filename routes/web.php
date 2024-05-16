@@ -31,5 +31,15 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 
+        Route::get('user/create', [UserController::class, 'create']);
+        Route::get('user/{role_id?}', [UserController::class, 'index']);
+        Route::post('user/add', [UserController::class, 'add'])->name('user.add');
+        Route::get('/user/get-list/{role_id?}', [UserController::class, 'getUserList']);
+        Route::get('/user/edit/{id}', [UserController::class, 'edit']);
+        Route::get('/user/view/{id}', [UserController::class, 'view']);
+        Route::post('user/update/{id}', [UserController::class, 'update'])->name('user.update');
+        Route::post('state-change', [UserController::class, 'stateChange']);
+        Route::post('/admin-serach', [UserController::class, 'search'])->name('admin.serach');
+        Route::get('/serach-user/{id}', [UserController::class, 'searchUser'])->name('serach.user');
     });
 });
