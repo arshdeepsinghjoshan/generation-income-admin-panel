@@ -107,7 +107,6 @@ class UserController extends Controller
     }
     public $s_no = 1;
 
-    public $setFilteredRecords = 0;
     public function getUserList(Request $request, $role_id = null)
     {
         $query  = User::orderBy('id', 'Desc');
