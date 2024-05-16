@@ -130,9 +130,6 @@ class UserController extends Controller
             ->addColumn('status', function ($data) {
                 return '<span class="' . $data->getStateBadgeOption() . '">' . $data->getState() . '</span>';
             })
-            ->addColumn('id', function ($data) {
-                return $this->s_no++;
-            })
             ->rawColumns(['created_by'])
 
             ->addColumn('created_at', function ($data) {

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WalletController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,5 +42,17 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
         Route::post('state-change', [UserController::class, 'stateChange']);
         Route::post('/admin-serach', [UserController::class, 'search'])->name('admin.serach');
         Route::get('/serach-user/{id}', [UserController::class, 'searchUser'])->name('serach.user');
+
+
+
+
+
+        Route::get('wallet/create', [WalletController::class, 'create']);
+        Route::get('wallet/', [WalletController::class, 'index']);
+        Route::post('wallet/add', [WalletController::class, 'add'])->name('wallet.add');
+        Route::get('/wallet/get-list/{role_id?}', [WalletController::class, 'getWalletList']);
+        Route::get('/wallet/edit/{id}', [WalletController::class, 'edit']);
+        Route::get('/wallet/view/{id}', [WalletController::class, 'view']);
+        Route::post('wallet/update/{id}', [WalletController::class, 'update'])->name('wallet.update');
     });
 });

@@ -10,8 +10,8 @@
             'label' => 'Home',
         ],
         [
-            'url' => 'user',
-            'label' => 'Users',
+            'url' => 'wallet',
+            'label' => 'wallets',
         ],
         $model->name,
     ]" />
@@ -21,21 +21,14 @@
             <div class="col-lg-12 mb-4 order-0">
                 <div class="card">
                     <div class="card-body">
-                        <h5>{{ !empty($model->name) ? (strlen($model->name) > 100 ? substr($model->name, 0, 100) . '...' : $model->name) : 'N/A' }}
+                        <h5>{{ !empty($model->wallet_number) ? (strlen($model->wallet_number) > 100 ? substr($model->wallet_number, 0, 100) . '...' : $model->wallet_number) : 'N/A' }}
                             <span class="{{ $model->getStateBadgeOption() }}">{{ $model->getState() }}</span>
                         </h5>
 
                         <x-a-detail-view :model="$model" :type="'double'" :column="[
                             'id',
-                            'email',
-                            'name',
-                            'referral_id',
-                            [
-                                'attribute' => 'role_id',
-                                'label' => 'Role',
-                                'value' => $model->getRole(),
-                                'visible' => true,
-                            ],
+                            'wallet_number',
+                           'balance',
                             [
                                 'attribute' => 'created_at',
                                 'label' => 'Created at',
@@ -49,7 +42,7 @@
                                 'value' => empty($model->updated_at)
                                     ? 'N/A'
                                     : date('Y-m-d h:i:s A', strtotime($model->updated_at)),
-                                'visible' => $model->role_id != User::ROLE_ADMIN && $model->id != Auth::id(),
+                              
                             ],
                         
                             [
