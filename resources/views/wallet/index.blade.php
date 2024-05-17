@@ -28,9 +28,10 @@
                         <x-a-update-menu-items :model="$model" :action="'index'" />
 
                         <div class="table-responsive">
-                            <x-a-grid-view :id="'wallet_table'" :model="$model" :url="Request::segment(2) ? 'wallet/get-list/' . Request::segment(2) : 'wallet/get-list/0'" :columns="[
+                            <x-a-grid-view :id="'wallet_table'" :model="$model" :url="'wallet/get-list/'" :columns="[
                                 'id',
                                 'wallet_number',
+                                'balance',
                                 'status',
                                 'created_at',
                                 'created_by',

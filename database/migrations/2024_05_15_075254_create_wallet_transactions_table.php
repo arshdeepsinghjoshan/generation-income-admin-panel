@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('type_id'); // 'credit' or 'debit'
             $table->string('transaction_type'); // 'level' or 'roi'
             $table->string('state_id'); // 'pending', 'completed', 'failed'
-            $table->string('wallet_id')->unique();
+            $table->string('wallet_id');
             $table->text('description')->nullable();
             $table->timestamps();
             $table->string('user_id')->nullable();

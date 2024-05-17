@@ -45,6 +45,13 @@ class User extends Authenticatable
     {
         return $this->belongsTo(User::class, 'parent_id');
     }
+
+    public function wallet()
+    {
+        return $this->hasOne(Wallet::class, 'created_by_id');
+    }
+
+
     public function password()
     {
         $this->password = Hash::make($this->password);
@@ -108,7 +115,7 @@ class User extends Authenticatable
         if ($user == null) {
             return false;
         }
-        return ($user->role_id == User::ROLE_ADMIN);
+        return ($user->isActive() &&  $user->role_id == User::ROLE_ADMIN);
     }
 
     public function createdBy()
@@ -128,13 +135,18 @@ class User extends Authenticatable
         });
     }
 
+    public function isActive()
+    {
+        return ($this->state_id == User::STATE_ACTIVE);
+    }
+
     public static function isUser()
     {
         $user = Auth::user();
         if ($user == null) {
             return false;
         }
-        return ($user->role_id == User::ROLE_USER);
+        return ($user->isActive() && $user->role_id == User::ROLE_USER);
     }
     public function getStateBadgeOption()
     {
@@ -191,7 +203,7 @@ class User extends Authenticatable
                     'color' => 'btn  btn-warning',
                     'title' => __(' Login'),
                     'text' => true,
-                    'url' => url('admin/user-login/' . ($model->id ?? 0) . '/' . ($model->slug ?? '')),
+                    'url' => url('user-login/' . ($model->id ?? 0) . '/' . ($model->slug ?? '')),
                     'visible' => ($model->role_id != User::ROLE_ADMIN  && $model->id != Auth::id())
 
                 ];

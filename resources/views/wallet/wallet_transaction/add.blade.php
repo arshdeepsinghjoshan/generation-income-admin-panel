@@ -1,14 +1,16 @@
 @extends('layouts.master')
-@section('title', 'User Add')
+@section('title', 'Wallet Add')
+
 @section('content')
+
     <x-a-breadcrumb :columns="[
         [
             'url' => '/',
             'label' => 'Home',
         ],
         [
-            'url' => 'user',
-            'label' => 'Users',
+            'url' => 'wallet/wallet-transaction',
+            'label' => 'Wallet Transaction',
         ],
     ]" />
 
@@ -26,7 +28,7 @@
                         </h3>
                     </div>
                     <div class="card-body">
-                        @include('user._form')
+                        @include('wallet.wallet-transaction._form')
 
                     </div>
                 </div>

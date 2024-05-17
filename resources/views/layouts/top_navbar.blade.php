@@ -60,7 +60,7 @@
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item" href="{{url('wallet/view/'.Auth::id())}}">
+                        <a class="dropdown-item" href="{{url('wallet/view/'.(isset(Auth::user()->wallet) && isset(Auth::user()->wallet->wallet_number) ? Auth::user()->wallet->id : 'null'))}}">
                             <span class="d-flex align-items-center align-middle">
                                 <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
                                 <span class="flex-grow-1 align-middle">Wallet</span>

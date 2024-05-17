@@ -6,6 +6,7 @@ use App\Models\PinCode;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use App\Models\Wallet;
 use App\Traits\Permission;
 use Illuminate\Support\Str;
 use DataTables;
@@ -23,7 +24,7 @@ class UserController extends Controller
             return view('user.index', compact('model'));
             // }
         } catch (\Exception $e) {
-            return redirect(User::isAdmin() ? 'admin/order' : 'client/order')->with('error', 'An error occurred: ' . $e->getMessage());
+            return redirect('user')->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
     public function create(Request $request)
@@ -85,14 +86,14 @@ class UserController extends Controller
 
             $model =  User::find($id);
             if (empty($model)) {
-                return redirect('user/0')->with('error', 'User does not exist');
+                return redirect('user')->with('error', 'User does not exist');
             }
             if (!User::isAdmin()) {
                 if ($model->role_id == User::ROLE_ADMIN) {
-                    return redirect('user/0')->with('error', 'You are not allowed to perform this action.');
+                    return redirect('user')->with('error', 'You are not allowed to perform this action.');
                 }
                 if ($model->id != Auth::user()->id && $model->created_by_id != Auth::user()->id) {
-                    return redirect('user/0')->with('error', 'You are not allowed to perform this action.');
+                    return redirect('user')->with('error', 'You are not allowed to perform this action.');
                 }
             }
             if ($this->validator($request->all(), $id)->fails()) {
@@ -107,13 +108,18 @@ class UserController extends Controller
     }
     public $s_no = 1;
 
-    public function getUserList(Request $request, $role_id = null)
+    public function getUserList(Request $request, $id = null)
     {
-        $query  = User::orderBy('id', 'Desc');
+        $query  = User::where('role_id', User::ROLE_USER)->orderBy('id', 'Desc');
 
-        if (!User::isAdmin())
-            $query->my();
 
+        if (empty($id))
+            if (!User::isAdmin())
+                $query->my();
+
+
+        if (!empty($id))
+            $query->where('id', $id);
 
         return Datatables::of($query)
             ->addIndexColumn()
@@ -196,7 +202,6 @@ class UserController extends Controller
                 return redirect('/dashboard')->with('error', 'User not found');
 
             return redirect()->route('serach.user', $customer->id);
-
         } catch (\Exception $e) {
             $bug = $e->getMessage();
             return redirect()->back()->with('error', $bug);
@@ -242,6 +247,7 @@ class UserController extends Controller
     public function add(Request $request)
     {
         try {
+            DB::beginTransaction();
             if ($this->validator($request->all())->fails()) {
                 $message = $this->validator($request->all())->messages()->first();
                 return redirect()->back()->withInput()->with('error', $message);
@@ -261,11 +267,22 @@ class UserController extends Controller
             $model->password();
 
             if ($model->save()) {
+                $walletModel = new Wallet();
+                $walletModel->state_id = Wallet::STATE_ACTIVE;
+                $walletModel->created_by_id = $model->id;
+                $walletModel->generateWalletNumber();
+                if (!$walletModel->save()) {
+                    DB::rollBack();
+                    return redirect('/')->with('error', 'Unable to save the User!');
+                }
+                DB::commit();
                 return redirect('/user/view/' . $model->id)->with('success', 'User created successfully!');
             } else {
+                DB::rollBack();
                 return redirect('/user')->with('error', 'Unable to save the User!');
             }
         } catch (\Exception $e) {
+            DB::rollBack();
             return redirect()->back()->withInput()->with('error', $e->getMessage());
         }
     }
@@ -323,7 +340,7 @@ class UserController extends Controller
             $model = new User();
             return view('user.register_report', compact('model'));
         } catch (\Exception $e) {
-            return redirect('admin/order')->with('error', 'An error occurred: ' . $e->getMessage());
+            return redirect('/')->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
 
@@ -385,5 +402,17 @@ class UserController extends Controller
         return $request->wantsJson()
             ? new Response('', 204)
             : redirect('/login');
+    }
+
+
+
+    public function userLogin($id)
+    {
+        try {
+            Auth::loginUsingId($id);
+            return redirect('/dashboard');
+        } catch (\Exception $e) {
+            return redirect('/')->with('error', 'An error occurred: ' . $e->getMessage());
+        }
     }
 }

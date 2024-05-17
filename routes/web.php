@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WalletController;
+use App\Http\Controllers\WalletTransactionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -28,20 +29,21 @@ Route::post('/registration', [AuthController::class, 'registration'])->name('add
 
 Route::group(['middleware' => 'prevent-back-history'], function () {
 
-    Route::group(['middleware' => 'auth'], function () {
+    Route::group(['middleware' => ['auth', 'active']], function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 
         Route::get('user/create', [UserController::class, 'create']);
         Route::get('user/{role_id?}', [UserController::class, 'index']);
         Route::post('user/add', [UserController::class, 'add'])->name('user.add');
-        Route::get('/user/get-list/{role_id?}', [UserController::class, 'getUserList']);
+        Route::get('/user/get-list/{id?}', [UserController::class, 'getUserList']);
         Route::get('/user/edit/{id}', [UserController::class, 'edit']);
         Route::get('/user/view/{id}', [UserController::class, 'view']);
         Route::post('user/update/{id}', [UserController::class, 'update'])->name('user.update');
         Route::post('state-change', [UserController::class, 'stateChange']);
         Route::post('/admin-serach', [UserController::class, 'search'])->name('admin.serach');
         Route::get('/serach-user/{id}', [UserController::class, 'searchUser'])->name('serach.user');
+        Route::get('/user-login/{id}', [UserController::class, 'userLogin']);
 
 
 
@@ -54,5 +56,10 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
         Route::get('/wallet/edit/{id}', [WalletController::class, 'edit']);
         Route::get('/wallet/view/{id}', [WalletController::class, 'view']);
         Route::post('wallet/update/{id}', [WalletController::class, 'update'])->name('wallet.update');
+
+
+        Route::get('wallet/wallet-transaction', [WalletTransactionController::class, 'index']);
+        Route::get('/wallet/wallet-transaction/get-list/{id?}', [WalletTransactionController::class, 'getWalletTransactionList']);
+        Route::get('/wallet/wallet-transaction/view/{id}', [WalletTransactionController::class, 'view']);
     });
 });
