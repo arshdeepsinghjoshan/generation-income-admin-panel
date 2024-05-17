@@ -100,7 +100,13 @@ class UserController extends Controller
                 $message = $this->validator($request->all(), $id)->messages()->first();
                 return redirect()->back()->withInput()->with('error', $message);
             }
-            $model->update($request->all());
+
+            $model->fill($request->all());
+            if ($request->profile_image) {
+                // dd($request->profile_image);
+                $model->profile_image = $this->imageUpload($request, "profile_image", '/public/uploads');
+            }
+            $model->save();
             return redirect("user/view/$model->id")->with('success', 'User updated  successfully');
         } catch (\Exception $e) {
             return redirect()->back()->withInput()->with('error', $e->getMessage());
@@ -230,6 +236,7 @@ class UserController extends Controller
         $rules = [
             "name" => "required|string",
             "email" => "required|email",
+            "profile_image" => 'nullable|image|mimes:jpeg,png,jpg'
         ];
         if ($id === null) {
             $rules = array_merge($rules, [
@@ -239,7 +246,7 @@ class UserController extends Controller
 
             ]);
         }
-
+       
 
         return Validator::make($data, $rules);
     }
@@ -265,7 +272,9 @@ class UserController extends Controller
             $model->created_by_id = Auth::id();
             $model->parent_id = $userGet->id;
             $model->password();
-
+            if ($request->profile_image) {
+                $model->profile_image = $this->imageUpload($request, "profile_image", '/public/uploads');
+            }
             if ($model->save()) {
                 $walletModel = new Wallet();
                 $walletModel->state_id = Wallet::STATE_ACTIVE;
