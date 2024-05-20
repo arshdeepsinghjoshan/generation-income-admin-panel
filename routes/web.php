@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\WalletTransactionController;
+use App\Models\SubscriptionPlan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -61,5 +63,22 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
         Route::get('wallet/wallet-transaction', [WalletTransactionController::class, 'index']);
         Route::get('/wallet/wallet-transaction/get-list/{id?}', [WalletTransactionController::class, 'getWalletTransactionList']);
         Route::get('/wallet/wallet-transaction/view/{id}', [WalletTransactionController::class, 'view']);
+
+
+
+
+
+        Route::get('subscription/plan/create', [SubscriptionPlanController::class, 'create']);
+        Route::get('subscription/plan/', [SubscriptionPlanController::class, 'index']);
+        Route::post('subscription/plan/add', [SubscriptionPlanController::class, 'add'])->name('subscriptionPlan.add');
+        Route::get('/subscription/plan/get-list/{role_id?}', [SubscriptionPlanController::class, 'getSubscriptionPlanList']);
+        Route::get('/subscription/plan/edit/{id}', [SubscriptionPlanController::class, 'edit']);
+        Route::get('/subscription/plan/view/{id}', [SubscriptionPlanController::class, 'view']);
+        Route::post('subscription/plan/update/{id}', [SubscriptionPlanController::class, 'update'])->name('subscriptionPlan.update');
+        Route::get('subscription/plan/select', [SubscriptionPlanController::class, 'planSelect']);
+
+
+
+        
     });
 });
