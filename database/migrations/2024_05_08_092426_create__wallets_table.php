@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('wallets');
         Schema::create('wallets', function (Blueprint $table) {
             $table->id();
             $table->string('wallet_number')->unique();
             $table->string('credit')->nullable();
             $table->string('debit')->nullable();
-            $table->string('balance')->nullable();
+            $table->string('balance')->nullable()->default(0);
             $table->string('state_id')->default(1);
             $table->string('type_id')->nullable();
             $table->integer('created_by_id');

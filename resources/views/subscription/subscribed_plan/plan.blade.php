@@ -11,8 +11,8 @@
             'label' => 'Home',
         ],
         [
-            'url' => 'subscription/plan',
-            'label' => 'subscription Plan',
+            'url' => 'subscription/subscribed-plan',
+            'label' => 'subscribed Plan',
         ],
     ]" />
 
@@ -26,7 +26,7 @@
                     <div class="card-body">
                         <h5>Rs. {{$plan->price ?? ''}}</h5>
                         <p class="card-text">{{$plan->description ?? ''}}.</p>
-                        <a href="{{url('subscription/subscribed-plan/'.$plan->id ?? '')}}" class="btn btn-primary">Select</a>
+                        <a href="{{url('subscription/plan/select/'.$plan->id ?? '')}}" class="btn btn-primary">Select</a>
                     </div>
                     <div class="card-footer text-muted">{{empty($plan->created_at)
                                     ? 'N/A'

@@ -11,17 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('subscription_plans', function (Blueprint $table) {
+        Schema::dropIfExists('subscribed_plans');
+        Schema::create('subscribed_plans', function (Blueprint $table) {
             $table->id();
-            $table->string('title', 128);
-            $table->text('description')->nullable();
-            $table->string('price', 32)->default(0);
-            $table->string('product_id', 128)->nullable();
+            $table->integer('plan_id')->nullable();
             $table->integer('state_id')->default(0);
             $table->integer('type_id')->nullable();
-            $table->integer('duration_type')->nullable();//Store duration type like day => 0 or month => 1 
-            $table->integer('duration')->nullable();//Enter number of duration like 1, 2, 3, 4, 5..12, 13..24
+            $table->integer('roi_count')->nullable()->default(0);
+            $table->integer('roi_complete_count')->nullable()->default(0);
             $table->integer('created_by_id')->nullable();
+            $table->timestamp('start_date')->nullable();
+            $table->timestamp('end_date')->nullable();
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('subscription_plans');
+        Schema::dropIfExists('subscribed_plans');
     }
 };

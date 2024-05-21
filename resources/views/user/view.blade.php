@@ -60,6 +60,12 @@
                                         'visible' => true,
                                     ],
                                     [
+                                        'attribute' => 'invest',
+                                        'label' => 'Total Investment',
+                                        'value' => $model->getTotalSubscribedPlanAmount(),
+                                        'visible' => !($model->role_id == User::ROLE_ADMIN),
+                                    ],
+                                    [
                                         'attribute' => 'created_at',
                                         'label' => 'Created at',
                                         'value' => empty($model->created_at)

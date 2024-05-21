@@ -1,7 +1,7 @@
 @php
-    use App\Models\User;
-    $segment1 = request()->segment(1);
-    $segment2 = request()->segment(2);
+use App\Models\User;
+$segment1 = request()->segment(1);
+$segment2 = request()->segment(2);
 @endphp
 
 <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme">
@@ -48,41 +48,61 @@
         <!--End User Managment -->
 
         @if (User::isAdmin())
-            <!--Wallet Managment -->
-            <li class="menu-item {{ $segment1 != 'wallet' ? '' : 'active open' }}">
-                <a href="javascript:void(0);" class="menu-link menu-toggle">
-                    <i class="menu-icon tf-icons bx bx-dock-top"></i>
-                    <div data-i18n="Wallet Management">Wallet Management</div>
-                </a>
-                <ul class="menu-sub">
-                    <li class="menu-item {{ $segment1 != 'wallet' ? '' : 'active' }}">
-                        <a href="{{ url('wallet') }}" class="menu-link">
-                            <div data-i18n="Account">Wallets</div>
-                        </a>
-                    </li>
-                </ul>
-            </li>
+        <!--Wallet Managment -->
+        <li class="menu-item {{ $segment1 != 'wallet' ? '' : 'active open' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-dock-top"></i>
+                <div data-i18n="Wallet Management">Wallet Management</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item {{ $segment1 != 'wallet' ? '' : 'active' }}">
+                    <a href="{{ url('wallet') }}" class="menu-link">
+                        <div data-i18n="Account">Wallets</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
         @endif
         <!--End Wallet Managment -->
 
-       
-     
-        <!-- Components -->
+
+
+        <!-- Subscription Managment -->
+
         <li class="menu-header small text-uppercase"><span class="menu-header-text">Subscription</span></li>
-        <!-- Cards -->
         <li class="menu-item {{ $segment2 != 'plan' ? '' : 'active' }}">
             <a href="{{ url('subscription/plan/') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-collection"></i>
                 <div data-i18n="Basic">Plans</div>
             </a>
         </li>
-       
-        <li class="menu-item {{ $segment2 != 'plans' ? '' : 'active' }}">
-            <a href="{{ url('wallet') }}"
-                target="_blank" class="menu-link">
+
+        <li class="menu-item {{ $segment2 != 'subscribed-plan' ? '' : 'active' }}">
+            <a href="{{ url('subscription/subscribed-plan') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-file"></i>
-                <div data-i18n="Documentation">Subscribed Plans</div>
+                <div data-i18n="Basic">Subscribed Plans</div>
             </a>
+        </li>
+
+        <!--End Subscription Managment -->
+
+
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">Income</span></li>
+        <li class="menu-item {{ $segment1 != 'user' ? '' : 'active open' }}">
+            <a href="javascript:void(0);" class="menu-link menu-toggle">
+                <i class="menu-icon tf-icons bx bx-layout"></i>
+                <div data-i18n="Layouts">Income Management</div>
+            </a>
+
+            <ul class="menu-sub">
+                <li class="menu-item {{ $segment1 != 'user' ? '' : 'active' }}">
+                    <a href="{{ url('user') }}" class="menu-link">
+                        <div data-i18n="Without menu">Users</div>
+                    </a>
+                </li>
+
+
+            </ul>
         </li>
     </ul>
 </aside>

@@ -29,6 +29,8 @@ class SubscriptionPlanController extends Controller
             return redirect('/dashboard')->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
+
+
     public function create(Request $request)
     {
         try {

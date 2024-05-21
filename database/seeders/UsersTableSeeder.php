@@ -17,24 +17,20 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        $faker = Faker::create();
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-
         // Get all table names
         $tables = DB::select('SHOW TABLES');
         $tableKey = 'Tables_in_' . DB::getDatabaseName();
-
         foreach ($tables as $table) {
             $tableName = $table->$tableKey;
             DB::table($tableName)->truncate();
         }
-
         // Re-enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         DB::table('users')->insert([
-            'name' => $faker->name,
-            'email' => $faker->unique()->safeEmail,
+            'name' => 'admin',
+            'email' => 'admin@lbm.in',
             'password' => Hash::make('password'),
             'referral_id' => 'JJOF1714714247',
             'state_id' => User::STATE_ACTIVE,

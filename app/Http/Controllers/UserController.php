@@ -222,8 +222,14 @@ class UserController extends Controller
 
             if (!$model)
                 return redirect('/')->with('error', 'User not found');
-
-
+            if (!User::isAdmin()) {
+                if ($model->role_id == User::ROLE_ADMIN) {
+                    return redirect('user')->with('error', 'You are not allowed to perform this action.');
+                }
+                if ($model->id != Auth::user()->id && $model->created_by_id != Auth::user()->id) {
+                    return redirect('user')->with('error', 'You are not allowed to perform this action.');
+                }
+            }
             return view('user.view', compact('model'));
         } catch (\Exception $e) {
             $bug = $e->getMessage();
@@ -246,8 +252,6 @@ class UserController extends Controller
 
             ]);
         }
-       
-
         return Validator::make($data, $rules);
     }
 

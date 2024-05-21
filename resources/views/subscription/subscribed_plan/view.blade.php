@@ -1,8 +1,5 @@
 @extends('layouts.master')
 @section('content')
-
-@section('title', 'Wallet View')
-
 <?php
 
 use App\Models\User;
@@ -13,10 +10,10 @@ use App\Models\User;
             'label' => 'Home',
         ],
         [
-            'url' => 'wallet/wallet-transaction',
-            'label' => 'Wallet Transaction',
+            'url' => 'subscription/subscribed-plan',
+            'label' => 'subscribed Plan',
         ],
-        $model->name,
+        $model->title,
     ]" />
 
 <div class="container-xxl flex-grow-1 container-p-y">
@@ -24,31 +21,51 @@ use App\Models\User;
         <div class="col-lg-12 mb-4 order-0">
             <div class="card">
                 <div class="card-body">
-                    <h5>{{ !empty($model->wallet && $model->wallet->wallet_number) ? $model->wallet->wallet_number : 'N/A' }}
+                    <h5>{{ !empty($model->subscriptionPlan && $model->subscriptionPlan->title) ? $model->subscriptionPlan->title : 'N/A' }}
                         <span class="{{ $model->getStateBadgeOption() }}">{{ $model->getState() }}</span>
                     </h5>
 
                     <x-a-detail-view :model="$model" :type="'double'" :column="[
                             'id',
                             [
-                                'attribute' => 'wallet_number',
-                                'value' => !empty($model->wallet && $model->wallet->wallet_number) ? $model->wallet->wallet_number : 'N/A',
-                              
+                                'attribute' => 'plan',
+                                'value' => !empty($model->subscriptionPlan && $model->subscriptionPlan->title) ? $model->subscriptionPlan->title : 'N/A'
                             ],
 
                             [
-                                'attribute' => 'transaction_type',
-                                'value' => $model->getTransactionType(),
-                              
+                                'attribute' => 'price',
+                                'value' => !empty($model->subscriptionPlan && $model->subscriptionPlan->price) ? $model->subscriptionPlan->price : 'N/A'
+                            ],
+
+
+
+                            [
+                                'attribute' => 'duration_type',
+                                'value' => !empty($model->subscriptionPlan && $model->subscriptionPlan->getDurationType()) ? $model->subscriptionPlan->getDurationType() : 'N/A'
                             ],
 
                             [
-                                'attribute' => 'type_id',
-                                'value' => $model->getType(),
+                                'attribute' => 'duration',
+                                'value' => !empty($model->subscriptionPlan && $model->subscriptionPlan->duration) ? $model->subscriptionPlan->duration : 'N/A'
+                            ],
+                          [
+                                'attribute' => 'roi_count',
+                                'value' => $model->roi_count,
+                                'visible' => User::isAdmin(),
+                            ],
+                            [
+                                'attribute' => 'start_date',
+                                'value' => empty($model->start_date)
+                                    ? 'N/A'
+                                    : date('Y-m-d h:i:s A', strtotime($model->start_date)),
+                            ],
+                            [
+                                'attribute' => 'end_date',
+                                'value' => empty($model->end_date)
+                                    ? 'N/A'
+                                    : date('Y-m-d h:i:s A', strtotime($model->end_date)),
                               
                             ],
-
-                           'amount',
                             [
                                 'attribute' => 'created_at',
                                 'label' => 'Created at',
@@ -73,17 +90,12 @@ use App\Models\User;
                                     : 'N/A',
                                 'visible' => true,
                             ],
-                            'description'
                         ]" />
                 </div>
             </div>
         </div>
     </div>
 
-
-    @if ($model->role_id != User::ROLE_ADMIN && $model->id != Auth::id())
-    <x-a-user-action :model="$model" attribute="state_id" :states="$model->getStateOptions()" />
-    @endif
 
 
 </div>

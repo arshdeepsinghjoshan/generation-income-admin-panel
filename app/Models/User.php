@@ -51,6 +51,17 @@ class User extends Authenticatable
         return $this->hasOne(Wallet::class, 'created_by_id');
     }
 
+    public function subscribedPlan()
+    {
+        return $this->hasMany(SubscribedPlan::class, 'created_by_id');
+    }
+
+    public function getTotalSubscribedPlanAmount()
+    {
+        return $this->subscribedPlan->sum(function ($subscribedPlan) {
+            return $subscribedPlan->subscriptionPlan->price;
+        });
+    }
 
     public function password()
     {
@@ -195,7 +206,7 @@ class User extends Authenticatable
                     'color' => 'btn btn-icon btn-warning',
                     'title' => __('Manage'),
                     'text' => false,
-                    'url' => url($model->role_id == User::ROLE_ADMIN ? 'user/0' : 'user/' . $model->role_id),
+                    'url' => url( 'user/'),
 
                 ];
                 $menu['login'] = [

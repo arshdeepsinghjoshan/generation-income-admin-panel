@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SubscribedPlanController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WalletController;
@@ -65,9 +66,6 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
         Route::get('/wallet/wallet-transaction/view/{id}', [WalletTransactionController::class, 'view']);
 
 
-
-
-
         Route::get('subscription/plan/create', [SubscriptionPlanController::class, 'create']);
         Route::get('subscription/plan/', [SubscriptionPlanController::class, 'index']);
         Route::post('subscription/plan/add', [SubscriptionPlanController::class, 'add'])->name('subscriptionPlan.add');
@@ -75,10 +73,15 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
         Route::get('/subscription/plan/edit/{id}', [SubscriptionPlanController::class, 'edit']);
         Route::get('/subscription/plan/view/{id}', [SubscriptionPlanController::class, 'view']);
         Route::post('subscription/plan/update/{id}', [SubscriptionPlanController::class, 'update'])->name('subscriptionPlan.update');
-        Route::get('subscription/plan/select', [SubscriptionPlanController::class, 'planSelect']);
-
-
-
         
+        Route::get('subscription/subscribed-plan/', [SubscribedPlanController::class, 'index']);
+        Route::get('/subscription/subscribed-plan/get-list/{id?}', [SubscribedPlanController::class, 'getSubscribedPlanList']);
+        Route::get('/subscription/subscribed-plan/view/{id}', [SubscribedPlanController::class, 'view']);
+        Route::get('subscription/subscribed-plan/{id}', [SubscribedPlanController::class, 'add']);
+
+
+        Route::get('subscription/testing/', [SubscribedPlanController::class, 'testing']);
+
+
     });
 });

@@ -22,8 +22,12 @@ class WalletTransaction extends Model
     const TYPE_CREDIT = 0;
     const TYPE_DEBIT = 1;
 
-    const TRANSACTION_LEVEL = 0;
-    const TRANSACTION_ROI   = 1;
+    const TRANSACTION_ROI = 0;
+
+    const TRANSACTION_LEVEL = 1;
+
+    const TRANSACTION_USER_INVEST = 2;
+
 
     public function createdBy()
     {
@@ -163,6 +167,8 @@ class WalletTransaction extends Model
         $list = [
             self::TRANSACTION_LEVEL => "success",
             self::TRANSACTION_ROI => "secondary",
+            self::TRANSACTION_USER_INVEST => "secondary",
+
         ];
         return isset($list[$this->transaction_type]) ? 'badge bg-' . $list[$this->transaction_type] : 'Not Defined';
     }
@@ -172,6 +178,8 @@ class WalletTransaction extends Model
         $list = [
             self::TRANSACTION_LEVEL => "success",
             self::TRANSACTION_ROI => "secondary",
+            self::TRANSACTION_USER_INVEST => "secondary",
+
         ];
         return isset($list[$transaction_type]) ? 'btn btn-' . $list[$transaction_type] : 'Not Defined';
     }
@@ -186,6 +194,7 @@ class WalletTransaction extends Model
         $list = array(
             self::TRANSACTION_LEVEL => "Level",
             self::TRANSACTION_ROI => "ROI",
+            self::TRANSACTION_USER_INVEST => "User Investment",
         );
         if ($id === null)
             return $list;

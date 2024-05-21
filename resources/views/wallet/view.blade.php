@@ -91,6 +91,7 @@ use App\Models\User;
                                 'id',
                                 'wallet_number',
                                 'type_id',
+                                'amount',
                                 'transaction_type',
                                 'status',
                                 'created_at',
