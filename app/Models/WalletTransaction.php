@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class WalletTransaction extends Model
 {
@@ -240,4 +241,19 @@ class WalletTransaction extends Model
         }
         return $menu;
     }
+
+
+    public static function add($amount, $wallet_id, $description, $transaction_type = WalletTransaction::TRANSACTION_USER_INVEST, $type_id = WalletTransaction::TYPE_DEBIT, $state_id = WalletTransaction::STATE_COMPLETED)
+    {
+        $walletTransactionModel = new WalletTransaction();
+        $walletTransactionModel->state_id = $state_id;
+        $walletTransactionModel->created_by_id = Auth::id();
+        $walletTransactionModel->transaction_type = $transaction_type;
+        $walletTransactionModel->type_id = $type_id;
+        $walletTransactionModel->wallet_id = $wallet_id;
+        $walletTransactionModel->amount = $amount;
+        $walletTransactionModel->description = $description;
+        return  $walletTransactionModel->save();
+    }
+
 }

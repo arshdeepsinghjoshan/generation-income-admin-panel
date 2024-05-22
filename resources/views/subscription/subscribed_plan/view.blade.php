@@ -13,7 +13,7 @@ use App\Models\User;
             'url' => 'subscription/subscribed-plan',
             'label' => 'subscribed Plan',
         ],
-        $model->title,
+        !empty($model->subscriptionPlan && $model->subscriptionPlan->title) ? $model->subscriptionPlan->title : 'N/A',
     ]" />
 
 <div class="container-xxl flex-grow-1 container-p-y">
@@ -27,6 +27,7 @@ use App\Models\User;
 
                     <x-a-detail-view :model="$model" :type="'double'" :column="[
                             'id',
+                            
                             [
                                 'attribute' => 'plan',
                                 'value' => !empty($model->subscriptionPlan && $model->subscriptionPlan->title) ? $model->subscriptionPlan->title : 'N/A'
@@ -53,6 +54,7 @@ use App\Models\User;
                                 'value' => $model->roi_count,
                                 'visible' => User::isAdmin(),
                             ],
+                            'roi_complete_count',
                             [
                                 'attribute' => 'start_date',
                                 'value' => empty($model->start_date)

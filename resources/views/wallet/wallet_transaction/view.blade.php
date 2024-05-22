@@ -16,7 +16,7 @@ use App\Models\User;
             'url' => 'wallet/wallet-transaction',
             'label' => 'Wallet Transaction',
         ],
-        $model->name,
+        !empty($model->wallet && $model->wallet->wallet_number) ? $model->wallet->wallet_number : 'N/A',
     ]" />
 
 <div class="container-xxl flex-grow-1 container-p-y">

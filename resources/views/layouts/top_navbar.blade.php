@@ -19,9 +19,6 @@
         <!-- /Search -->
 
         <ul class="navbar-nav flex-row align-items-center ms-auto">
-            <!-- Place this tag where you want the button to render. -->
-
-            <!-- User -->
             <li class="nav-item navbar-dropdown dropdown-user dropdown">
                 <a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
                     <div class="avatar avatar-online">
@@ -64,7 +61,6 @@
                             <span class="d-flex align-items-center align-middle">
                                 <i class="flex-shrink-0 bx bx-credit-card me-2"></i>
                                 <span class="flex-grow-1 align-middle">Wallet</span>
-                                <span class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
                             </span>
                         </a>
                     </li>
@@ -79,7 +75,6 @@
                     </li>
                 </ul>
             </li>
-            <!--/ User -->
         </ul>
     </div>
 </nav>

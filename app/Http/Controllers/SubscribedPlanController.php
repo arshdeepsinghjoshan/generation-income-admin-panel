@@ -185,20 +185,34 @@ class SubscribedPlanController extends Controller
                 $model->roi_count = $startDate->diffInDays($endDate);
                 $model->start_date = $startDate;
                 $model->end_date = $endDate;
+
+
                 if (($model->save())) {
                     $admin = User::find(1);
                     $adminWallet = Wallet::where('created_by_id', $admin->id)->first();
                     $adminWallet->balance += $SubscriptionPlanModel->price;
                     $adminWallet->save();
-                    $walletTransactionModel = new WalletTransaction();
-                    $walletTransactionModel->state_id = WalletTransaction::STATE_COMPLETED;
-                    $walletTransactionModel->created_by_id = Auth::id();
-                    $walletTransactionModel->transaction_type = WalletTransaction::TRANSACTION_USER_INVEST;
-                    $walletTransactionModel->type_id = WalletTransaction::TYPE_CREDIT;
-                    $walletTransactionModel->wallet_id = $adminWallet->id;
-                    $walletTransactionModel->amount = $SubscriptionPlanModel->price;
-                    $walletTransactionModel->description = Auth::user()->name . ' is purchased Plan successfully. ( Plan:-' . $SubscriptionPlanModel->title . ', Type:-' . $SubscriptionPlanModel->getDurationType() . ')';
-                    $walletTransactionModel->save();
+                    WalletTransaction::add($SubscriptionPlanModel->price, $adminWallet->id, Auth::user()->name . ' is purchased Plan successfully. ( Plan:-' . $SubscriptionPlanModel->title . ', Type:-' . $SubscriptionPlanModel->getDurationType() . ')', WalletTransaction::TRANSACTION_USER_INVEST, WalletTransaction::TYPE_CREDIT);
+                    $userLevel = $this->getUserLevel(Auth::user()->referral_id);
+                    rsort($userLevel);
+                    $array2 = [7, 4, 3, 2, 1, 1, 1];
+                    $combinedArray = [];
+                    foreach ($userLevel as $key => $value) {
+                        if (isset($array2[$key])) {
+                            $combinedArray[$value] = $array2[$key];
+                        }
+                    }
+                    foreach ($combinedArray as $key => $percentage) {
+                        $amount = $this->calculatePercentage($SubscriptionPlanModel->price, $percentage);
+                        $adminWallet = Wallet::where('created_by_id', 1)->first();
+                        $adminWallet->balance -= $amount;
+                        $adminWallet->save();
+                        WalletTransaction::add($amount, $adminWallet->id, $model->createdBy->name . ' in TRANSACTION level income generator. And debit your account ( Plan:-' . $model->subscriptionPlan->title . ', Type:-' . $model->subscriptionPlan->getDurationType() . ')', WalletTransaction::TRANSACTION_LEVEL);
+                        $Wallet = Wallet::where('created_by_id', $key)->first();
+                        $Wallet->balance += $amount;
+                        $Wallet->save();
+                        WalletTransaction::add($amount, $key, $model->createdBy->name . ' in TRANSACTION level income generator. And credit your account ( Plan:-' . $model->subscriptionPlan->title . ', Type:-' . $model->subscriptionPlan->getDurationType() . ')', WalletTransaction::TRANSACTION_LEVEL, WalletTransaction::TYPE_CREDIT);
+                    }
                     DB::commit();
                     return redirect('/subscription/subscribed-plan')->with('success', 'Subscribed Plan created successfully');
                 }
@@ -208,22 +222,86 @@ class SubscribedPlanController extends Controller
             return redirect('/dashboard')->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
-
+    function calculatePercentage($amount, $percentage)
+    {
+        return ($amount * $percentage) / 100;
+    }
 
 
     public function testing()
     {
         try {
-
+            DB::beginTransaction();
             $subscribedPlanModel =  SubscribedPlan::findActive()->whereColumn('roi_count', '!=', 'roi_complete_count')->get();
             foreach ($subscribedPlanModel as $subscribedPlan) {
                 if ($subscribedPlan->roi_complete_count <= $subscribedPlan->roi_count) {
                     $subscribedPlan->roi_complete_count += 1;
+                    $userIncome = $subscribedPlan->subscriptionPlan->price / $subscribedPlan->roi_count;
+
+
+                    $adminWallet = Wallet::where('created_by_id', 1)->first();
+                    $adminWallet->balance -= $userIncome;
+                    $adminWallet->save();
+
+
+
+                    $walletTransactionModel = new WalletTransaction();
+                    $walletTransactionModel->state_id = WalletTransaction::STATE_COMPLETED;
+                    $walletTransactionModel->created_by_id = Auth::id();
+                    $walletTransactionModel->transaction_type = WalletTransaction::TRANSACTION_ROI;
+                    $walletTransactionModel->type_id = WalletTransaction::TYPE_DEBIT;
+                    $walletTransactionModel->wallet_id = $adminWallet->id;
+                    $walletTransactionModel->amount = $userIncome;
+                    $walletTransactionModel->description = $subscribedPlan->createdBy->name . ' in TRANSACTION ROI income generator. And debit your account ( Plan:-' . $subscribedPlan->subscriptionPlan->title . ', Type:-' . $subscribedPlan->subscriptionPlan->getDurationType() . ')';
+                    $walletTransactionModel->save();
+
+
+
+
+
+                    $userWallet = Wallet::where('created_by_id', $subscribedPlan->createdBy->id)->first();
+                    $userWallet->balance += $userIncome;
+                    $userWallet->save();
+
+
+
+                    $walletTransactionModel = new WalletTransaction();
+                    $walletTransactionModel->state_id = WalletTransaction::STATE_COMPLETED;
+                    $walletTransactionModel->created_by_id = Auth::id();
+                    $walletTransactionModel->transaction_type = WalletTransaction::TRANSACTION_ROI;
+                    $walletTransactionModel->type_id = WalletTransaction::TYPE_DEBIT;
+                    $walletTransactionModel->wallet_id = $userWallet->id;
+                    $walletTransactionModel->amount = $userIncome;
+                    $walletTransactionModel->description = $subscribedPlan->createdBy->name . ' in TRANSACTION ROI income generator. And credit your account ( Plan:-' . $subscribedPlan->subscriptionPlan->title . ', Type:-' . $subscribedPlan->subscriptionPlan->getDurationType() . ')';
+                    $walletTransactionModel->save();
+
+
+
+
                     $subscribedPlan->save();
                 }
             }
-            $model = new SubscribedPlan();
+
+            DB::commit();
         } catch (\Exception $e) {
+            DB::rollBack();
         }
+    }
+
+
+    public function getUserLevel($referralId, $depth = 0, $maxDepth = 7)
+    {
+        if ($depth >= $maxDepth) {
+            return [];
+        }
+        $user = User::where('referral_id', $referralId)->with('parent')->first();
+        if (!$user || !$user->parent) {
+            return [];
+        }
+        $parentIds = $this->getUserLevel($user->parent->referral_id, $depth + 1, $maxDepth);
+        if (!in_array($user->parent->id, $parentIds)) {
+            array_push($parentIds, $user->parent->id);
+        }
+        return $parentIds;
     }
 }

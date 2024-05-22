@@ -23,6 +23,11 @@ class Wallet extends Model
     {
         return $this->belongsTo(User::class, 'created_by_id');
     }
+
+    public function transactions()
+    {
+        return $this->hasMany(WalletTransaction::class, 'wallet_id');
+    }
     public function generateWalletNumber()
     {
         $randomString = strtoupper(Str::random(4));

@@ -116,13 +116,13 @@ class UserController extends Controller
 
     public function getUserList(Request $request, $id = null)
     {
-        $query  = User::where('role_id', User::ROLE_USER)->orderBy('id', 'Desc');
+        $query  = User::orderBy('id', 'Desc');
 
-
-        if (empty($id))
+        if (empty($id)) {
+            $query->where('role_id', User::ROLE_USER);
             if (!User::isAdmin())
                 $query->my();
-
+        }
 
         if (!empty($id))
             $query->where('id', $id);

@@ -51,6 +51,13 @@ class User extends Authenticatable
         return $this->hasOne(Wallet::class, 'created_by_id');
     }
 
+
+
+    public function transactions()
+    {
+        return $this->hasManyThrough(WalletTransaction::class, Wallet::class, 'created_by_id', 'wallet_id');
+    }
+
     public function subscribedPlan()
     {
         return $this->hasMany(SubscribedPlan::class, 'created_by_id');
@@ -206,7 +213,7 @@ class User extends Authenticatable
                     'color' => 'btn btn-icon btn-warning',
                     'title' => __('Manage'),
                     'text' => false,
-                    'url' => url( 'user/'),
+                    'url' => url('user/'),
 
                 ];
                 $menu['login'] = [
@@ -237,5 +244,49 @@ class User extends Authenticatable
                 ];
         }
         return $menu;
+    }
+
+    public function profitSalesTransactions($type = null)
+    {
+        $previousTotalProfit = Auth::user()->wallet->balance ?? 0;
+        $transactions = Auth::user()->transactions()->get();
+
+        $totalProfit = $transactions->reduce(function ($carry, $transaction) {
+            if ($transaction->getType() === 'Credit') {
+                return $carry + $transaction->amount;
+            } elseif ($transaction->getType() === 'Debit') {
+                return $carry - $transaction->amount;
+            }
+            return $carry;
+        });
+        if ($previousTotalProfit !== null && $previousTotalProfit != 0) {
+            $percentageChange = (($totalProfit - $previousTotalProfit) / $previousTotalProfit) * 100;
+        } else {
+            $percentageChange = 0;
+        }
+
+        switch ($type) {
+            case "profit":
+                return $totalProfit;
+                break;
+            case "percentageChange":
+                return $percentageChange;
+                break;
+
+            case "sales":
+                return 0;
+                break;
+
+            case "payments":
+                echo 0;
+                break;
+
+            case "transactions":
+                echo 0;
+                break;
+
+            default:
+                echo 0;
+        }
     }
 }

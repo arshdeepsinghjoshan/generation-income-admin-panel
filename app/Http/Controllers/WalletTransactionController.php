@@ -72,6 +72,7 @@ class WalletTransactionController extends Controller
     {
         $query  = WalletTransaction::orderBy('id', 'Desc');
 
+        if (empty($id))
         if (!User::isAdmin())
             $query->my();
 
@@ -240,7 +241,7 @@ class WalletTransactionController extends Controller
             $model  = WalletTransaction::find($id);
             if ($model) {
                 if (!User::isAdmin()) {
-                    if ($model->created_by_id != Auth::user()->id) {
+                    if ($model->wallet_id != Auth::user()->wallet->id) {
                         return redirect('wallet/')->with('error', 'You are not allowed to perform this action.');
                     }
                 }

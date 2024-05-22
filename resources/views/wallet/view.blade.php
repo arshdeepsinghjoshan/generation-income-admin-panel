@@ -13,7 +13,7 @@ use App\Models\User;
             'url' => 'wallet',
             'label' => 'wallets',
         ],
-        $model->name,
+        $model->wallet_number,
     ]" />
 
 <div class="container-xxl flex-grow-1 container-p-y">

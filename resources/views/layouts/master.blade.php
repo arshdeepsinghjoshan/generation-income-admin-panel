@@ -18,28 +18,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet" />
-
-    <!-- Icons. Uncomment required icon fonts -->
     <link rel="stylesheet" href="{{ url('/assets/vendor/fonts/boxicons.css') }}" />
-
-    <!-- Core CSS -->
     <link rel="stylesheet" href="{{ url('/assets/vendor/css/core.css') }}" class="template-customizer-core-css" />
     <link rel="stylesheet" href="{{ url('/assets/vendor/css/theme-default.css') }}" class="template-customizer-theme-css" />
     <link rel="stylesheet" href="{{ url('/assets/css/demo.css') }}" />
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" rel="stylesheet">
-
-    <!-- Vendors CSS -->
     <link rel="stylesheet" href="{{ url('/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css') }}" />
-
     <link rel="stylesheet" href="{{ url('/assets/vendor/libs/apex-charts/apex-charts.css') }}" />
-
-    <!-- Page CSS -->
-
-    <!-- Helpers -->
     <script src="{{ url('/assets/vendor/js/helpers.js') }}"></script>
-
-    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
-    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
     <script src="{{ url('/assets/js/config.js') }}"></script>
     <link href="{{ asset('assets/css/style.css') }}" rel="stylesheet" type="text/css" />
 
@@ -51,23 +37,11 @@
 
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
-            <!-- Menu -->
-
             @include('layouts.sidebar')
-
-            <!-- / Menu -->
-
-            <!-- Layout container -->
             <div class="layout-page">
-                <!-- Navbar -->
-
-
                 @include('layouts.top_navbar')
-                <!-- / Navbar -->
                 @if (session('success') || session('error'))
                 <div class="container-xxl mt-2">
-
-                    <!-- Content wrapper -->
                     @include('include.message')
 
                 </div>
@@ -82,20 +56,17 @@
                             ©
                             <script>
                                 document.write(new Date().getFullYear());
-                            </script> Copyright {{env('APP_NAME')}}. All Rights Reserved Powered By 
+                            </script> Copyright {{env('APP_NAME')}}. All Rights Reserved Powered By
 
                             <a href="http://arshresume.epizy.com/" target="_blank" class="footer-link fw-bolder">ASK</a>
                         </div>
-                       
+
                     </div>
                 </footer>
-                <!-- / Footer -->
 
                 <div class="content-backdrop fade"></div>
             </div>
-            <!-- Content wrapper -->
         </div>
-        <!-- / Layout page -->
     </div>
 
     <!-- Overlay -->
