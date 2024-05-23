@@ -28,6 +28,16 @@ class WalletTransactionController extends Controller
             return redirect('/')->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
+
+    public function getTransactions(Request $request)
+{
+    $transactions = Auth::user()->transactions()->latest()->paginate(4);
+
+    if ($request->ajax()) {
+        return view('wallet.wallet_transaction.transactions', compact('transactions'))->render();
+    }
+
+}
     public function create(Request $request)
     {
         try {
@@ -73,8 +83,8 @@ class WalletTransactionController extends Controller
         $query  = WalletTransaction::orderBy('id', 'Desc');
 
         if (empty($id))
-        if (!User::isAdmin())
-            $query->my();
+            if (!User::isAdmin())
+                $query->my();
 
         if (!empty($id))
             $query->where('wallet_id', $id);
@@ -103,7 +113,7 @@ class WalletTransactionController extends Controller
             ->rawColumns(['created_by'])
 
             ->addColumn('created_at', function ($data) {
-                return (empty($data->updated_at)) ? 'N/A' : date('Y-m-d', strtotime($data->updated_at));
+                return (empty($data->created_at)) ? 'N/A' : date('Y-m-d h:i:s A', strtotime($data->created_at));
             })
             ->addColumn('action', function ($data) {
                 $html = '<div class="table-actions text-center">';
@@ -129,36 +139,51 @@ class WalletTransactionController extends Controller
             ->filter(function ($query) {
                 if (!empty(request('search')['value'])) {
                     $searchValue = request('search')['value'];
-                    $searchTerms = explode(' ', $searchValue);
-                    
-                    $query->where(function ($q) use ($searchTerms) {
-                        foreach ($searchTerms as $term) {
-                            $q->where('id', 'like', "%$term%")
-                                ->orWhere('amount', 'like', "%$term%")
-                                ->orWhere('created_at', 'like', "%$term%")
-                                ->orWhereHas('createdBy', function ($query) use ($term) {
-                                    $query->Where('name', 'like', "%$term%");
-                                })
-                                ->orWhereHas('wallet', function ($query) use ($term) {
-                                    $query->Where('wallet_number', 'like', "%$term%");
-                                })
-                                ->orWhere(function ($query) use ($term) {
-                                    $query->typeId($term);
-                                })
-                                ->orWhere(function ($query) use ($term) {
-                                    $query->transactionType($term);
-                                })
-                                ->orWhere(function ($query) use ($term) {
-                                    $query->searchState($term);
-                                });
-
-                        }
+                    $query->where(function ($q) use ($searchValue) {
+                        $q->where('id', 'like', "%$searchValue%")
+                            ->orWhere('amount', 'like', "%$searchValue%")
+                            ->orWhere('description', 'like', "%$searchValue%")
+                            ->orWhere('created_at', 'like', "%$searchValue%")
+                            ->orWhereHas('createdBy', function ($query) use ($searchValue) {
+                                $query->Where('name', 'like', "%$searchValue%");
+                            })
+                            ->orWhereHas('wallet', function ($query) use ($searchValue) {
+                                $query->Where('wallet_number', 'like', "%$searchValue%");
+                            })
+                            ->orWhere(function ($query) use ($searchValue) {
+                                $query->typeId($searchValue);
+                            })
+                            ->orWhere(function ($query) use ($searchValue) {
+                                $query->transactionType($searchValue);
+                            })
+                            ->orWhere(function ($query) use ($searchValue) {
+                                $query->searchState($searchValue);
+                            });
                     });
                 }
             })
+            ->editColumn('created_at', function ($item) {
+                return date('Y-m-d h:i:s A', strtotime($item->created_at));
+                //   return \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $item->created_at)->format('Y-m-d h:i:s A');
+
+            })
             ->make(true);
     }
+    public function fetchTransaction()
+    {
+        $walletTransactions = Auth::user()->transactions;
 
+        $data = $walletTransactions->map(function ($transaction) {
+            return [
+                'date' => date('Y-m-d H:i:s', strtotime($transaction->created_at)),
+                'type' => $transaction->getType(),
+                'amount' => $transaction->amount,
+            ];
+        });
+        
+
+        return response()->json($data);
+    }
 
     protected static function validator(array $data, $id = null)
     {

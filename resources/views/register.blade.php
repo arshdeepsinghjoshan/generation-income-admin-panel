@@ -46,6 +46,14 @@
                                 </div>
                             </div>
 
+                            <div class="mb-3 required form-password-toggle">
+                                <label class="form-label" for="password">Confirm Password</label>
+                                <div class="input-group input-group-merge">
+                                    <input type="confirm_password" id="confirm_password" class="form-control" name="confirm_password" />
+                                    <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                </div>
+                            </div>
+
                             <div class="mb-3 required">
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms" />

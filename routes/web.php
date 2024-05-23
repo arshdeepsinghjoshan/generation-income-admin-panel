@@ -73,7 +73,7 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
         Route::get('/subscription/plan/edit/{id}', [SubscriptionPlanController::class, 'edit']);
         Route::get('/subscription/plan/view/{id}', [SubscriptionPlanController::class, 'view']);
         Route::post('subscription/plan/update/{id}', [SubscriptionPlanController::class, 'update'])->name('subscriptionPlan.update');
-        
+
         Route::get('subscription/subscribed-plan/', [SubscribedPlanController::class, 'index']);
         Route::get('/subscription/subscribed-plan/get-list/{id?}', [SubscribedPlanController::class, 'getSubscribedPlanList']);
         Route::get('/subscription/subscribed-plan/view/{id}', [SubscribedPlanController::class, 'view']);
@@ -82,6 +82,9 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
 
         Route::get('subscription/testing/', [SubscribedPlanController::class, 'testing']);
 
+        Route::get('/subscription/totat-sale', [SubscribedPlanController::class, 'getSalesData'])->name('subscribed.totatSale');
+        Route::get('/wallet/fetch-transaction', [WalletTransactionController::class, 'fetchTransaction'])->name('wallet.fetchTransaction');
+        Route::get('/transactions', [WalletTransactionController::class, 'getTransactions'])->name('transactions.get');
 
     });
 });

@@ -72,7 +72,29 @@ class User extends Authenticatable
 
     public function password()
     {
-        $this->password = Hash::make($this->password);
+        return  $this->password = Hash::make($this->password);
+    }
+
+    public function todayProfit()
+    {
+        $today = Carbon::today();
+
+        // Fetch subscribed plans for today
+        $subscribedPlans = SubscribedPlan::with('subscriptionPlan')
+            ->whereDate('created_at', $today)
+            ->get();
+
+        // Calculate total sales for today
+        $totalSales = $subscribedPlans->sum(function ($subscribedPlan) {
+            return $subscribedPlan->subscriptionPlan->amount;
+        });
+
+        // Calculate total profit for today
+        $totalProfit = $subscribedPlans->sum(function ($subscribedPlan) {
+            return $subscribedPlan->subscriptionPlan->price - $subscribedPlan->subscriptionPlan->cost;
+        });
+        return $totalProfit;
+        // return view('sales.todayProfit', compact('totalSales', 'totalProfit'));
     }
 
     public function generateReferralCode()
@@ -148,6 +170,18 @@ class User extends Authenticatable
             foreach ($roleOptions as $roleId => $roleName) {
                 if (stripos($roleName, $search) !== false) {
                     $query->orWhere('role_id', $roleId);
+                }
+            }
+        });
+    }
+
+    public function scopeSearchState($query, $search)
+    {
+        $roleOptions = self::getStateOptions();
+        return $query->where(function ($query) use ($search, $roleOptions) {
+            foreach ($roleOptions as $roleId => $roleName) {
+                if (stripos($roleName, $search) !== false) {
+                    $query->orWhere('state_id', $roleId);
                 }
             }
         });
@@ -250,7 +284,6 @@ class User extends Authenticatable
     {
         $previousTotalProfit = Auth::user()->wallet->balance ?? 0;
         $transactions = Auth::user()->transactions()->get();
-
         $totalProfit = $transactions->reduce(function ($carry, $transaction) {
             if ($transaction->getType() === 'Credit') {
                 return $carry + $transaction->amount;
@@ -267,23 +300,39 @@ class User extends Authenticatable
 
         switch ($type) {
             case "profit":
-                return $totalProfit;
-                break;
+                return $totalProfit ?? 0;
+
             case "percentageChange":
                 return $percentageChange;
-                break;
+
 
             case "sales":
-                return 0;
-                break;
+                $totalSales = SubscribedPlan::with('subscriptionPlan')->get()->sum(function ($subscribedPlan) {
+                    return $subscribedPlan->subscriptionPlan->price;
+                });
+                return $totalSales;
+
+            case "sales_percentage":
+                $subscribedPlans = SubscribedPlan::with('subscriptionPlan')->get();
+
+                $totalSales = $subscribedPlans->sum(function ($subscribedPlan) {
+                    return $subscribedPlan->subscriptionPlan->price;
+                });
+                $salesWithPercentages = $subscribedPlans->map(function ($subscribedPlan) use ($totalSales) {
+                    $price = $subscribedPlan->subscriptionPlan->price;
+                    $percentage = $totalSales > 0 ? ($price / $totalSales) * 100 : 0;
+                    return  $percentage;
+                });
+                return $salesWithPercentages;
+
 
             case "payments":
                 echo 0;
-                break;
+
 
             case "transactions":
                 echo 0;
-                break;
+
 
             default:
                 echo 0;

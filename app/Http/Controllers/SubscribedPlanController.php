@@ -304,4 +304,27 @@ class SubscribedPlanController extends Controller
         }
         return $parentIds;
     }
+
+    public function getSalesData(Request $request)
+    {
+        $subscribedPlans = SubscribedPlan::with('subscriptionPlan')->get();
+
+        // Calculate total sales for each day
+        $totalSalesData = $subscribedPlans->groupBy(function ($date) {
+            return Carbon::parse($date->created_at)->format('Y-m-d ');
+        })->map(function ($day) {
+            return $day->sum(function ($subscribedPlan) {
+                return $subscribedPlan->subscriptionPlan->price;
+            });
+        });
+
+        $salesData = $totalSalesData->map(function ($totalSales, $date) {
+            return [
+                'date' => $date,
+                'totalSales' => $totalSales
+            ];
+        })->values()->toArray();
+
+        return response()->json($salesData);
+    }
 }

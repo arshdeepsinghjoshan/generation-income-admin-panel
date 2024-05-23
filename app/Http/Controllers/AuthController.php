@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -62,9 +63,11 @@ class AuthController extends Controller
     {
         $rules = [
             "referrad_code" => "required|exists:users,referral_id",
-            "password" => "required|string",
+            "password" => ["required", "string"],
             "email" => "required|email|unique:users|max:100",
             "name" => "required|max:50",
+            "confirm_password" => "required|same:password",
+
         ];
 
 
@@ -74,35 +77,35 @@ class AuthController extends Controller
     public function registration(Request $request)
     {
         // try {
-            DB::beginTransaction();
-            if ($this->validator($request->all())->fails()) {
-                $message = $this->validator($request->all())->messages()->first();
-                return redirect()->back()->withInput()->with('error', $message);
-            }
-            $referralUser = User::where('referral_id', $request->referrad_code)->first();
-            $model = new User();
-            $model->fill($request->all());
-            $model->role_id = User::ROLE_USER;
-            $model->state_id = User::STATE_ACTIVE;
-            $model->created_by_id = $referralUser->id;
-            $model->parent_id = $referralUser->id;
-            $model->generateReferralCode();
-            $model->password();
-            if ($model->save()) {
-                $walletModel = new Wallet();
-                $walletModel->state_id = Wallet::STATE_ACTIVE;
-                $walletModel->created_by_id = $model->id;
-                $walletModel->generateWalletNumber();
-                if (!$walletModel->save()) {
-                    DB::rollBack();
-                    return redirect('/')->with('error', 'Unable to save the User!');
-                }
-                DB::commit();
-                return redirect('/')->with('success', 'Registration successfully!');
-            } else {
+        DB::beginTransaction();
+        if ($this->validator($request->all())->fails()) {
+            $message = $this->validator($request->all())->messages()->first();
+            return redirect()->back()->withInput()->with('error', $message);
+        }
+        $referralUser = User::where('referral_id', $request->referrad_code)->first();
+        $model = new User();
+        $model->fill($request->all());
+        $model->role_id = User::ROLE_USER;
+        $model->state_id = User::STATE_ACTIVE;
+        $model->created_by_id = $referralUser->id;
+        $model->parent_id = $referralUser->id;
+        $model->generateReferralCode();
+        $model->password = Hash::make($request->password);
+        if ($model->save()) {
+            $walletModel = new Wallet();
+            $walletModel->state_id = Wallet::STATE_ACTIVE;
+            $walletModel->created_by_id = $model->id;
+            $walletModel->generateWalletNumber();
+            if (!$walletModel->save()) {
                 DB::rollBack();
                 return redirect('/')->with('error', 'Unable to save the User!');
             }
+            DB::commit();
+            return redirect('/')->with('success', 'Registration successfully!');
+        } else {
+            DB::rollBack();
+            return redirect('/')->with('error', 'Unable to save the User!');
+        }
         // } catch (\Exception $e) {
         //     DB::rollBack();
         //     return redirect()->back()->withInput()->with('error', $e->getMessage());

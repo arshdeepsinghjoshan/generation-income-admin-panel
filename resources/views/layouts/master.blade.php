@@ -39,7 +39,7 @@
         <div class="layout-container">
             @include('layouts.sidebar')
             <div class="layout-page">
-                @include('layouts.top_navbar')
+                @include('layouts.topbar')
                 @if (session('success') || session('error'))
                 <div class="container-xxl mt-2">
                     @include('include.message')

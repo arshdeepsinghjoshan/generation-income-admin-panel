@@ -55,15 +55,23 @@ $segment2 = request()->segment(2);
                 <div data-i18n="Wallet Management">Wallet Management</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item {{ $segment1 != 'wallet' ? '' : 'active' }}">
+                <li class="menu-item {{ $segment1 == 'wallet' && $segment2 != 'wallet-transaction' ? 'active' : '' }}">
                     <a href="{{ url('wallet') }}" class="menu-link">
                         <div data-i18n="Account">Wallets</div>
                     </a>
                 </li>
             </ul>
+
+            <ul class="menu-sub">
+                <li class="menu-item {{ $segment1 == 'wallet' && $segment2 == 'wallet-transaction' ? 'active' : '' }}">
+                    <a href="{{ url('wallet/wallet-transaction') }}" class="menu-link">
+                        <div data-i18n="Account">Wallet Transactions</div>
+                    </a>
+                </li>
+            </ul>
         </li>
-        @endif
         <!--End Wallet Managment -->
+        @endif
 
 
 
@@ -87,22 +95,6 @@ $segment2 = request()->segment(2);
         <!--End Subscription Managment -->
 
 
-        <li class="menu-header small text-uppercase"><span class="menu-header-text">Income</span></li>
-        <li class="menu-item {{ $segment1 != 'user' ? '' : 'active open' }}">
-            <a href="javascript:void(0);" class="menu-link menu-toggle">
-                <i class="menu-icon tf-icons bx bx-layout"></i>
-                <div data-i18n="Layouts">Income Management</div>
-            </a>
 
-            <ul class="menu-sub">
-                <li class="menu-item {{ $segment1 != 'user' ? '' : 'active' }}">
-                    <a href="{{ url('user') }}" class="menu-link">
-                        <div data-i18n="Without menu">Users</div>
-                    </a>
-                </li>
-
-
-            </ul>
-        </li>
     </ul>
 </aside>

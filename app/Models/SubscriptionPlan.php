@@ -5,8 +5,6 @@ namespace App\Models;
 use App\Traits\AActiveRecord;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class SubscriptionPlan extends Model
 {
@@ -39,7 +37,10 @@ class SubscriptionPlan extends Model
             }
         });
     }
-
+    public function subscribedPlans()
+    {
+        return $this->hasMany(SubscribedPlan::class);
+    }
     public function scopeDurationType($query, $search)
     {
         $durationTypeOptions = self::getDurationTypeOptions();

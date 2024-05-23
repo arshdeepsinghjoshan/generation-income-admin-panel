@@ -11,6 +11,7 @@ use App\Traits\Permission;
 use Illuminate\Support\Str;
 use DataTables;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
@@ -145,7 +146,7 @@ class UserController extends Controller
             ->rawColumns(['created_by'])
 
             ->addColumn('created_at', function ($data) {
-                return (empty($data->updated_at)) ? 'N/A' : date('Y-m-d', strtotime($data->updated_at));
+                return (empty($data->created_at)) ? 'N/A' : date('Y-m-d', strtotime($data->created_at));
             })
             ->addColumn('action', function ($data) {
                 $html = '<div class="table-actions text-center">';
@@ -180,6 +181,8 @@ class UserController extends Controller
                                     $query->Where('name', 'like', "%$term%");
                                 })->orWhere(function ($query) use ($term) {
                                     $query->searchRole($term);
+                                })->orWhere(function ($query) use ($term) {
+                                    $query->searchState($term);
                                 });
                         }
                     });
@@ -275,7 +278,7 @@ class UserController extends Controller
             $model->state_id = User::STATE_ACTIVE;
             $model->created_by_id = Auth::id();
             $model->parent_id = $userGet->id;
-            $model->password();
+            $model->password = Hash::make($request->password);
             if ($request->profile_image) {
                 $model->profile_image = $this->imageUpload($request, "profile_image", '/public/uploads');
             }
