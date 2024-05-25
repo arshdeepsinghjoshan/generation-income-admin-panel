@@ -190,6 +190,178 @@ class UserController extends Controller
             })
             ->make(true);
     }
+
+
+    public function getWalletTransaction(Request $request, $id = null)
+    {
+
+        $relation = $request->relation;
+        $query  = $request->modelType::find($request->modelId);
+        $queryRelation =   $query->$relation;
+        // Determine if wallet is a collection or a single instance
+        if ($queryRelation instanceof \Illuminate\Database\Eloquent\Collection) {
+            // It's a collection (hasMany or belongsToMany)
+            $queryRelation = $queryRelation;
+        } else {
+            // It's a single instance (hasOne or belongsTo)
+            $queryRelation = collect([$queryRelation]);
+        }
+        // Check if the collection is empty
+      
+        $dataTable = Datatables::of($queryRelation)
+        ->addColumn('wallet_number', function ($data) {
+            return !empty($data->wallet && $data->wallet->wallet_number) ? $data->wallet->wallet_number : 'N/A';
+        })
+        ->addColumn('created_by', function ($data) {
+            return !empty($data->createdBy && $data->createdBy->name) ? $data->createdBy->name : 'N/A';
+        })
+        ->addColumn('name', function ($data) {
+            return !empty($data->name) ? (strlen($data->name) > 60 ? substr(ucfirst($data->name), 0, 60) . '...' : ucfirst($data->name)) : 'N/A';
+        })
+        ->addColumn('status', function ($data) {
+            return '<span class="' . $data->getStateBadgeOption() . '">' . $data->getState() . '</span>';
+        })
+        ->addColumn('transaction_type', function ($data) {
+            return '<span class="' . $data->getTransactionTypeBadgeOption() . '">' . $data->getTransactionType() . '</span>';
+        })
+
+        ->addColumn('type_id', function ($data) {
+            return '<span class="' . $data->getTypeBadgeOption() . '">' . $data->getType() . '</span>';
+        })
+        ->rawColumns(['created_by'])
+
+        ->addColumn('created_at', function ($data) {
+            return (empty($data->created_at)) ? 'N/A' : date('Y-m-d h:i:s A', strtotime($data->created_at));
+        })
+        ->addColumn('action', function ($data) {
+            $html = '<div class="table-actions text-center">';
+            // $html .= ' <a class="btn btn-icon btn-primary mt-1" href="' . url('wallet/edit/' . $data->id) . '" ><i class="fa fa-edit"></i></a>';
+            $html .=    '  <a class="btn btn-icon btn-primary mt-1" href="' . url('wallet/wallet-transaction/view/' . $data->id) . '"  ><i class="fa fa-eye
+                "data-toggle="tooltip"  title="View"></i></a>';
+            $html .=  '</div>';
+            return $html;
+        })->addColumn('customerClickAble', function ($data) {
+            $html = 0;
+
+            return $html;
+        })
+        ->rawColumns([
+            'action',
+            'created_at',
+            'status',
+            'customerClickAble',
+            'transaction_type',
+            'type_id'
+        ]);
+        if (!($queryRelation instanceof \Illuminate\Database\Query\Builder)) {
+            $searchValue = $request->input('search.value');
+            if ($searchValue) {
+                $searchTerms = explode(' ', $searchValue);
+                $collection = $queryRelation->filter(function ($item) use ($searchTerms) {
+                    foreach ($searchTerms as $term) {
+                        if (
+                            strpos($item->id, $term) !== false ||
+                            strpos($item->name, $term) !== false ||
+                            strpos($item->email, $term) !== false ||
+                            strpos($item->created_at, $term) !== false ||
+                            (isset($item->createdBy) && strpos($item->createdBy->name, $term) !== false) ||
+                            (isset($item->wallet) && strpos($item->wallet->wallet_number, $term) !== false) ||
+                            $item->searchState($term) ||
+                            $item->typeId($term)||
+                            $item->transactionType($term)
+
+                        ) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+            }
+        }
+
+        return $dataTable->make(true);
+    }
+
+
+    public function getWallet(Request $request, $id = null)
+    {
+
+        $relation = $request->relation;
+        $query  = $request->modelType::find($request->modelId);
+        $queryRelation =   $query->$relation;
+        // Determine if wallet is a collection or a single instance
+        if ($queryRelation instanceof \Illuminate\Database\Eloquent\Collection) {
+            // It's a collection (hasMany or belongsToMany)
+            $queryRelation = $queryRelation;
+        } else {
+            // It's a single instance (hasOne or belongsTo)
+            $queryRelation = collect([$queryRelation]);
+        }
+        // Check if the collection is empty
+        if ($queryRelation->isEmpty()) {
+            return response()->json(['error' => 'No related records found'], 404);
+        }
+        $dataTable = Datatables::of($queryRelation)
+            ->addIndexColumn()
+
+            ->addColumn('created_by', function ($data) {
+                return !empty($data->createdBy && $data->createdBy->name) ? $data->createdBy->name : 'N/A';
+            })
+            ->addColumn('name', function ($data) {
+                return !empty($data->name) ? (strlen($data->name) > 60 ? substr(ucfirst($data->name), 0, 60) . '...' : ucfirst($data->name)) : 'N/A';
+            })
+
+            ->addColumn('status', function ($data) {
+                return '<span class="' . $data->getStateBadgeOption() . '">' . $data->getState() . '</span>';
+            })
+            ->rawColumns(['created_by'])
+
+            ->addColumn('created_at', function ($data) {
+                return (empty($data->created_at)) ? 'N/A' : date('Y-m-d', strtotime($data->created_at));
+            })
+            ->addColumn('action', function ($data) {
+                $html = '<div class="table-actions text-center">';
+                $html .= ' <a class="btn btn-icon btn-primary mt-1" href="' . url('user/edit/' . $data->id) . '" ><i class="fa fa-edit"></i></a>';
+                $html .=    '  <a class="btn btn-icon btn-primary mt-1" href="' . url('user/view/' . $data->id) . '"  ><i class="fa fa-eye
+                    "data-toggle="tooltip"  title="View"></i></a>';
+                $html .=  '</div>';
+                return $html;
+            })->addColumn('customerClickAble', function ($data) {
+                $html = 0;
+
+                return $html;
+            })
+            ->rawColumns([
+                'action',
+                'created_at',
+                'status',
+                'customerClickAble'
+            ]);
+        if (!($queryRelation instanceof \Illuminate\Database\Query\Builder)) {
+            $searchValue = $request->input('search.value');
+            if ($searchValue) {
+                $searchTerms = explode(' ', $searchValue);
+                $collection = $queryRelation->filter(function ($item) use ($searchTerms) {
+                    foreach ($searchTerms as $term) {
+                        if (
+                            strpos($item->id, $term) !== false ||
+                            strpos($item->name, $term) !== false ||
+                            strpos($item->email, $term) !== false ||
+                            strpos($item->created_at, $term) !== false ||
+                            (isset($item->createdBy) && strpos($item->createdBy->name, $term) !== false) ||
+                            $item->searchState($term)
+                        ) {
+                            return true;
+                        }
+                    }
+                    return false;
+                });
+            }
+        }
+
+        return $dataTable->make(true);
+    }
+
     public function search(Request $request)
     {
         try {

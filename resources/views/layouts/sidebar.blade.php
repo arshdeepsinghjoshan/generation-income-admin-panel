@@ -95,6 +95,26 @@ $segment2 = request()->segment(2);
         <!--End Subscription Managment -->
 
 
+        <!-- Support Managment -->
+
+        <li class="menu-header small text-uppercase"><span class="menu-header-text">Support</span></li>
+        <li class="menu-item {{ $segment1 == 'support' && $segment2 == 'department' ? 'active' : '' }}">
+            <a href="{{ url('support/department') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-collection"></i>
+                <div data-i18n="Basic">Department</div>
+            </a>
+        </li>
+
+        <li class="menu-item {{ $segment1 == 'support' && $segment2 != 'department' ? 'active' : '' }}">
+            <a href="{{ url('support') }}" class="menu-link">
+                <i class="menu-icon tf-icons bx bx-file"></i>
+                <div data-i18n="Basic">Supports</div>
+            </a>
+        </li>
+
+        <!--End Support Managment -->
+
+
 
     </ul>
 </aside>

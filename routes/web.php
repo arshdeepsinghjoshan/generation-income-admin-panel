@@ -4,6 +4,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SubscribedPlanController;
 use App\Http\Controllers\SubscriptionPlanController;
+use App\Http\Controllers\SupportController;
+use App\Http\Controllers\SupportDepartmentController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WalletController;
 use App\Http\Controllers\WalletTransactionController;
@@ -40,6 +42,8 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
         Route::get('user/{role_id?}', [UserController::class, 'index']);
         Route::post('user/add', [UserController::class, 'add'])->name('user.add');
         Route::get('/user/get-list/{id?}', [UserController::class, 'getUserList']);
+        Route::get('/users/get-wallet-transaction/{id?}', [UserController::class, 'getWalletTransaction']);
+        Route::get('/users/get-wallet/{id?}', [UserController::class, 'getWallet']);
         Route::get('/user/edit/{id}', [UserController::class, 'edit']);
         Route::get('/user/view/{id}', [UserController::class, 'view']);
         Route::post('user/update/{id}', [UserController::class, 'update'])->name('user.update');
@@ -78,13 +82,32 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
         Route::get('/subscription/subscribed-plan/get-list/{id?}', [SubscribedPlanController::class, 'getSubscribedPlanList']);
         Route::get('/subscription/subscribed-plan/view/{id}', [SubscribedPlanController::class, 'view']);
         Route::get('subscription/subscribed-plan/{id}', [SubscribedPlanController::class, 'add']);
-
-
         Route::get('subscription/testing/', [SubscribedPlanController::class, 'testing']);
 
         Route::get('/subscription/totat-sale', [SubscribedPlanController::class, 'getSalesData'])->name('subscribed.totatSale');
         Route::get('/wallet/fetch-transaction', [WalletTransactionController::class, 'fetchTransaction'])->name('wallet.fetchTransaction');
         Route::get('/transactions', [WalletTransactionController::class, 'getTransactions'])->name('transactions.get');
+
+
+
+
+        Route::get('support', [SupportController::class, 'index']);
+        Route::get('support/create', [SupportController::class, 'create']);
+        Route::post('support/add', [SupportController::class, 'add'])->name('support.add');
+        Route::get('/support/get-list', [SupportController::class, 'getSupportList']);
+        Route::get('/support/edit/{id}', [SupportController::class, 'edit']);
+        Route::get('/support/view/{id}', [SupportController::class, 'view']);
+        Route::post('support/update', [SupportController::class, 'update'])->name('support.update');
+
+
+        Route::get('support/department', [SupportDepartmentController::class, 'index']);
+        Route::post('support/department/add', [SupportDepartmentController::class, 'store'])->name('supportDepartment.add');
+        Route::get('/support/department/get-list', [SupportDepartmentController::class, 'getDepartmenttList']);
+        Route::get('/support/department/edit/{id}', [SupportDepartmentController::class, 'edit']);
+        Route::get('/support/department/view/{id}', [SupportDepartmentController::class, 'view']);
+        Route::post('support/department/update/{id}', [SupportDepartmentController::class, 'update'])->name('supportDepartment.update');
+        Route::get('/support/department/stateChange/{id}/{state_id}', [SupportDepartmentController::class, 'stateChange']);
+        Route::get('/support/department/delete/{id}', [SupportDepartmentController::class, 'finalDelete']);
 
     });
 });

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::dropIfExists('wallet_transactions');
         Schema::create('wallet_transactions', function (Blueprint $table) {
             $table->id();
-            $table->decimal('amount', 15, 2)->default(0);
+            $table->decimal('amount', 15, 5)->default(0);
             $table->string('type_id'); // 'credit' or 'debit'
             $table->string('transaction_type'); // 'level' or 'roi, User invest'
             $table->string('state_id'); // 'pending', 'completed', 'failed'

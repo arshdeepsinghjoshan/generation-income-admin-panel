@@ -2,13 +2,12 @@
 @section('title', 'User View')
 @section('content')
 
-<style type="text/css">
-.grid-image {
-    width: 183px;
-    height: 119px;
-}
-
-</style>
+    <style type="text/css">
+        .grid-image {
+            width: 183px;
+            height: 119px;
+        }
+    </style>
     <?php
     
     use App\Models\User;
@@ -130,15 +129,20 @@
                         <div class="tab-pane show active" id="navs-justified-wallet" role="tabpanel">
                             <div class="table-responsive">
 
-                                <x-a-grid-view :id="'wallet_table'" :model="$model" :url="'wallet/get-list/' . $model->id" :columns="[
-                                    'id',
-                                    'wallet_number',
-                                    'balance',
-                                    'status',
-                                    'created_at',
-                                    'created_by',
-                                    'action',
-                                ]" />
+
+
+                                <x-a-relation-grid :id="'wallet_table'" :relation="'wallet'" :model="$model" :url="'users/get-wallet/'"
+                                    :columns="[
+                                        'id',
+                                        'wallet_number',
+                                        'balance',
+                                        'status',
+                                        'created_at',
+                                        'created_by',
+                                        'action',
+                                    ]" />
+
+
 
                             </div>
                         </div>
@@ -146,12 +150,8 @@
 
                         <div class="tab-pane fade" id="navs-justified-wallet-history" role="tabpanel">
                             <div class="table-responsive">
-
-                                <x-a-grid-view :id="'wallet_transaction_table'" :model="$model" :url="'wallet/wallet-transaction/get-list/' .
-                                    (isset($model->wallet) && isset($model->wallet->wallet_number)
-                                        ? $model->wallet->id
-                                        : 'null')"
-                                    :columns="[
+                                <x-a-relation-grid :id="'wallet_transaction_table'" :relation="'transactions'" :model="$model"
+                                    :url="'users/get-wallet-transaction/'" :columns="[
                                         'id',
                                         'wallet_number',
                                         'amount',
@@ -162,6 +162,7 @@
                                         'created_by',
                                         'action',
                                     ]" />
+                                
                             </div>
 
 

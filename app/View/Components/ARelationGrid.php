@@ -11,9 +11,30 @@ class ARelationGrid extends Component
     /**
      * Create a new component instance.
      */
-    public function __construct()
+    public $id;
+    public $modelId;
+    public $url;
+    public $columns;
+    public $relation;
+    public $buttons;
+    public $model;
+
+    public $filterButtonId;
+
+    public $customfilterIds;
+
+
+    public function __construct($columns, $model,$url, $id, $relation, $buttons = [], $filterButtonId = null, $customfilterIds = [])
     {
-        //
+        $this->columns = $columns;
+        $this->id = $id;
+        $this->url = url($url);
+        $this->modelId = $model->id;
+        $this->model = $model;
+        $this->buttons = $buttons;
+        $this->relation = $relation;
+        $this->filterButtonId = $filterButtonId;
+        $this->customfilterIds = $customfilterIds;
     }
 
     /**
