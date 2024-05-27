@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [AuthController::class, 'login'])->name('login');
-Route::get('/login', [AuthController::class, 'login'])->name('login');
+Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('/login/authenticate', [AuthController::class, 'authenticate'])->name('authenticate');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/registration', [AuthController::class, 'registration'])->name('add.registration');
@@ -63,6 +63,7 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
         Route::get('/wallet/edit/{id}', [WalletController::class, 'edit']);
         Route::get('/wallet/view/{id}', [WalletController::class, 'view']);
         Route::post('wallet/update/{id}', [WalletController::class, 'update'])->name('wallet.update');
+        Route::get('relation/get-list', [UserController::class, 'getrelationData']);
 
 
         Route::get('wallet/wallet-transaction', [WalletTransactionController::class, 'index']);

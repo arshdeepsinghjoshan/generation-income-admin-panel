@@ -90,7 +90,9 @@ use App\Models\User;
                     <div class="tab-pane show active" id="navs-justified-wallet-transaction" role="tabpanel">
                         <div class="table-responsive">
 
-                            <x-a-grid-view :id="'wallet_transaction_table'" :model="$model" :url="'subscription/subscribed-plan/get-list/'.$model->id" :columns="[
+ 
+
+                            <x-a-relation-grid :id="'wallet_transaction_table'" :relation="'subscribedPlans'" :model="$model"  :columns="[
                                 'id',
                                 'plan_id',
                                 'price',
@@ -99,15 +101,21 @@ use App\Models\User;
                                 'created_at',
                                 'created_by',
                                 'action',
-                            ]" />
+                                    ]" />
+
+
+
 
                         </div>
                     </div>
 
+                    
                     <div class="tab-pane fade" id="navs-justified-user" role="tabpanel">
                         <div class="table-responsive">
 
-                            <x-a-grid-view :id="'user_table'" :model="$model" :url="'user/get-list/'.$model->created_by_id" :columns="[
+
+
+                            <x-a-relation-grid :id="'user_table'" :relation="'createdBy'" :model="$model" :columns="[
                                 'id',
                                 'name',
                                 'role_id',
@@ -116,7 +124,7 @@ use App\Models\User;
                                 'created_at',
                                 'created_by',
                                 'action',
-                            ]" />
+                                    ]" />
                         </div>
 
 

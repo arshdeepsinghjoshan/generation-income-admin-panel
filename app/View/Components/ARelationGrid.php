@@ -24,7 +24,7 @@ class ARelationGrid extends Component
     public $customfilterIds;
 
 
-    public function __construct($columns, $model,$url, $id, $relation, $buttons = [], $filterButtonId = null, $customfilterIds = [])
+    public function __construct($columns, $model,  $id, $relation, $buttons = [], $filterButtonId = null, $customfilterIds = [],$url = 'relation/get-list',)
     {
         $this->columns = $columns;
         $this->id = $id;

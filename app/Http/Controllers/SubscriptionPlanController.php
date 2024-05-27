@@ -219,4 +219,5 @@ class SubscriptionPlanController extends Controller
             return redirect()->back()->with('error', 'An error occurred: ' . $e->getMessage());
         }
     }
+
 }

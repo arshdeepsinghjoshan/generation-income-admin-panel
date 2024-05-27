@@ -86,8 +86,9 @@ use App\Models\User;
                 <div class="tab-content">
                     <div class="tab-pane show active" id="navs-justified-wallet-transaction" role="tabpanel">
                         <div class="table-responsive">
-                        
-                        <x-a-grid-view :id="'wallet_transaction_table'" :model="$model" :url="'wallet/wallet-transaction/get-list/'.$model->id" :columns="[
+
+
+                            <x-a-relation-grid :id="'wallet_transaction_table'" :relation="'transactions'" :model="$model" :columns="[
                                 'id',
                                 'wallet_number',
                                 'type_id',
@@ -97,15 +98,19 @@ use App\Models\User;
                                 'created_at',
                                 'created_by',
                                 'action',
-                            ]" />
+                                    ]" />
 
-                    </div>
+
+
+                        </div>
                     </div>
 
                     <div class="tab-pane fade" id="navs-justified-user" role="tabpanel">
                         <div class="table-responsive">
-                      
-                    <x-a-grid-view :id="'user_table'" :model="$model" :url="'user/get-list/'.$model->created_by_id" :columns="[
+
+
+
+                            <x-a-relation-grid :id="'user_table'" :relation="'createdBy'" :model="$model"  :columns="[
                                 'id',
                                 'name',
                                 'role_id',
@@ -114,9 +119,11 @@ use App\Models\User;
                                 'created_at',
                                 'created_by',
                                 'action',
-                            ]" />
-                    </div>
-                       
+                                    ]" />
+
+
+                        </div>
+
 
                     </div>
 
