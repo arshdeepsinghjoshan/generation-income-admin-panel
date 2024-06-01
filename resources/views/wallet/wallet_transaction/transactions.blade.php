@@ -12,7 +12,7 @@
     <a href="{{url('wallet/wallet-transaction/view/'.$transaction->id)}}">
         <li class="d-flex mb-4 pb-1">
             <div class="avatar flex-shrink-0 me-3">
-                <img src="{{ url('assets/img/icons/unicons/wallet.png') }}" alt="User" class="rounded" />
+                <img src="{{ url('public/assets/img/icons/unicons/wallet.png') }}" alt="User" class="rounded" />
             </div>
             <div class="d-flex w-100 flex-wrap align-items-center justify-content-between gap-2">
                 <div class="me-2">

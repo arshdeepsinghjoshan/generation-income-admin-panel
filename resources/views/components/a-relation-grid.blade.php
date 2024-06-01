@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="{{ asset('assets/css/datatables.min.css') }}">
+<link rel="stylesheet" href="{{ asset('public/assets/css/datatables.min.css') }}">
 
 <!-- <link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.css" /> -->
 <table id="{{ $id }}" class="table">
@@ -29,7 +29,7 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<script src="{{ asset('assets/js/datatables.min.js') }}"></script>
+<script src="{{ asset('public/assets/js/datatables.min.js') }}"></script>
 <script>
     (function($) {
         'use strict';

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\SiteController;
 use App\Http\Controllers\SubscribedPlanController;
 use App\Http\Controllers\SubscriptionPlanController;
 use App\Http\Controllers\SupportController;
@@ -23,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [AuthController::class, 'login'])->name('login');
+Route::get('/', [SiteController::class, 'index']);
 Route::get('login', [AuthController::class, 'login'])->name('login');
 Route::post('/login/authenticate', [AuthController::class, 'authenticate'])->name('authenticate');
 Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -109,6 +110,5 @@ Route::group(['middleware' => 'prevent-back-history'], function () {
         Route::post('support/department/update/{id}', [SupportDepartmentController::class, 'update'])->name('supportDepartment.update');
         Route::get('/support/department/stateChange/{id}/{state_id}', [SupportDepartmentController::class, 'stateChange']);
         Route::get('/support/department/delete/{id}', [SupportDepartmentController::class, 'finalDelete']);
-
     });
 });

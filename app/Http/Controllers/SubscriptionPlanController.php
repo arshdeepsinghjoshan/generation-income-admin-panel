@@ -71,14 +71,13 @@ class SubscriptionPlanController extends Controller
     public function getSubscriptionPlanList(Request $request, $id = null)
     {
         $query  = SubscriptionPlan::orderBy('id', 'Desc');
-
         if (empty($id))
             if (!User::isAdmin())
                 $query->my();
 
-
         if (!empty($id))
             $query->where('created_by_id', $id);
+
 
         return Datatables::of($query)
             ->addIndexColumn()
@@ -142,6 +141,7 @@ class SubscriptionPlanController extends Controller
                 }
             })
             ->make(true);
+
     }
 
 

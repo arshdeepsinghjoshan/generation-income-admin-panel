@@ -38,7 +38,7 @@ use App\Models\User;
                     </div>
                     <div class="col-sm-5 text-center text-sm-left">
                         <div class="card-body pb-0 px-0 px-md-4">
-                            <img src="{{ url('assets/img/illustrations/man-with-laptop-light.png') }}" height="140" alt="View Badge User" data-app-dark-img="illustrations/man-with-laptop-dark.png" data-app-light-img="illustrations/man-with-laptop-light.png" />
+                            <img src="{{ url('public/assets/img/illustrations/man-with-laptop-light.png') }}" height="140" alt="View Badge User" data-app-dark-img="illustrations/man-with-laptop-dark.png" data-app-light-img="illustrations/man-with-laptop-light.png" />
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,7 @@ use App\Models\User;
                         <div class="card-body">
                             <div class="card-title d-flex align-items-start justify-content-between">
                                 <div class="avatar flex-shrink-0">
-                                    <img src="{{ url('assets/img/icons/unicons/chart-success.png') }}" alt="chart success" class="rounded" />
+                                    <img src="{{ url('public/assets/img/icons/unicons/chart-success.png') }}" alt="chart success" class="rounded" />
                                 </div>
                              
                             </div>
@@ -73,7 +73,7 @@ use App\Models\User;
                         <div class="card-body">
                             <div class="card-title d-flex align-items-start justify-content-between">
                                 <div class="avatar flex-shrink-0">
-                                    <img src="{{ url('assets/img/icons/unicons/wallet-info.png') }}" alt="Credit Card" class="rounded" />
+                                    <img src="{{ url('public/assets/img/icons/unicons/wallet-info.png') }}" alt="Credit Card" class="rounded" />
                                 </div>
                               
                             </div>
@@ -90,7 +90,7 @@ use App\Models\User;
                     <div class="card-body">
                         <div class="card-title d-flex align-items-start justify-content-between">
                             <div class="avatar flex-shrink-0">
-                                <img src="{{ url('assets/img/icons/unicons/wallet-info.png') }}" alt="Credit Card" class="rounded" />
+                                <img src="{{ url('public/assets/img/icons/unicons/wallet-info.png') }}" alt="Credit Card" class="rounded" />
                             </div>
                            
                         </div>
@@ -123,7 +123,7 @@ use App\Models\User;
                     <div class="card-body">
                         <div class="card-title d-flex align-items-start justify-content-between">
                             <div class="avatar flex-shrink-0">
-                                <img src="{{ url('assets/img/icons/unicons/paypal.png') }}" alt="Credit Card" class="rounded" />
+                                <img src="{{ url('public/assets/img/icons/unicons/paypal.png') }}" alt="Credit Card" class="rounded" />
                             </div>
 
                         </div>
@@ -138,7 +138,7 @@ use App\Models\User;
                     <div class="card-body">
                         <div class="card-title d-flex align-items-start justify-content-between">
                             <div class="avatar flex-shrink-0">
-                                <img src="{{ url('assets/img/icons/unicons/cc-primary.png') }}" alt="Credit Card" class="rounded" />
+                                <img src="{{ url('public/assets/img/icons/unicons/cc-primary.png') }}" alt="Credit Card" class="rounded" />
                             </div>
 
                         </div>
@@ -152,7 +152,7 @@ use App\Models\User;
                     <div class="card-body">
                         <div class="card-title d-flex align-items-start justify-content-between">
                             <div class="avatar flex-shrink-0">
-                            <img src="{{ url('assets/img/icons/unicons/cc-primary.png') }}" alt="Credit Card" class="rounded" />
+                            <img src="{{ url('public/assets/img/icons/unicons/cc-primary.png') }}" alt="Credit Card" class="rounded" />
 
                             </div>
 
@@ -167,7 +167,7 @@ use App\Models\User;
                     <div class="card-body">
                         <div class="card-title d-flex align-items-start justify-content-between">
                             <div class="avatar flex-shrink-0">
-                                <img src="{{ url('assets/img/icons/unicons/cc-primary.png') }}" alt="Credit Card" class="rounded" />
+                                <img src="{{ url('public/assets/img/icons/unicons/cc-primary.png') }}" alt="Credit Card" class="rounded" />
                             </div>
                            
                         </div>
@@ -237,7 +237,7 @@ use App\Models\User;
 <script>
     function fetchTransactions(page) {
         $.ajax({
-            url: "/transactions?page=" + page,
+            url: "{{url('/transactions?page=')}}" + page,
             success: function(data) {
                 $('#transactions').html(data);
             }

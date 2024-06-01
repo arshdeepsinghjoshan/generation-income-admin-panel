@@ -26,7 +26,7 @@ class AGridView extends Component
 
     public function __construct($url, $columns, $id, $model = '', $title = null, $buttons = [], $filterButtonId = null, $customfilterIds = [])
     {
-        $this->url = $url;
+        $this->url = url($url);
         $this->columns = $columns;
         $this->id = $id;
         $this->model = $model;

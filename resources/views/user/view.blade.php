@@ -37,7 +37,7 @@ use App\Models\User;
                         <div class="col-md-3 col-lg-2">
                             <div class="admin-blog-image mt-5">
 
-                                <img src="{{ asset($model->profile_image ? 'uploads/' . $model->profile_image : 'assets/img/avatars/1.png') }}" alt="Profile" class="grid-image">
+                                <img src="{{ asset($model->profile_image ? 'public/uploads/' . $model->profile_image : 'public/assets/img/avatars/1.png') }}" alt="Profile" class="grid-image">
 
                             </div>
                         </div>

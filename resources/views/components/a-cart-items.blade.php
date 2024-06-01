@@ -19,7 +19,7 @@
                 <div class="cartItems">
                     @foreach($model as $cartItem)
                     <div class="stat_data pb-3 mb-3 d-flex align-items-center ">
-                        <img class="default-img me-3" src="{{ asset('uploads/products/'. !empty($cartItem->product) ? $cartItem->product->image : '' ) }}" alt="">
+                        <img class="default-img me-3" src="{{ asset('public/uploads/products/'. !empty($cartItem->product) ? $cartItem->product->image : '' ) }}" alt="">
                         <div class="">
                             <p class="text-dark pb-0 mb-0">{{!empty($cartItem->product) ? $cartItem->product->name : ''}}</p>
                             <small class="cv-pdoduct-price">{{$cartItem->quantity}} &nbsp; ✕ &nbsp; ₹ {{$cartItem->unit_price}}</small>
